@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  swagger:
+    image: swaggerapi/swagger-ui
+    restart: "always"
+    environment:
+      API_URL: /openapi.yml
+    ports:
+      - "8989:8080"
