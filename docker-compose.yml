@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  swagger:
+    build:
+      context: ./swagger
+      dockerfile: Dockerfile
+    restart: "always"
+    environment:
+      API_URL: /docs/openapi.yml
+    ports:
+      - "127.0.0.1:8989:8080"

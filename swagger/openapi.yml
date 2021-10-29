@@ -1,0 +1,1926 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Wizart Data Logistic API
+paths:
+  /brands:
+    get:
+      summary: Get all Brands for current user
+      operationId: getBrands
+      tags:
+        - Brands
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Brand'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+    delete:
+      summary: Delete Brands by their Uuids for current user
+      operationId: deleteBrands
+      tags:
+        - Brands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    example: "object_uuid_string"
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ok
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /brands/{brand}/visibility:
+    patch:
+      summary: Update visibility. Show or hide from fitting room.
+      operationId: patchBrandVisibility
+      parameters:
+        - $ref: '#/components/parameters/brandParam'
+      tags:
+        - Brands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                is_visible:
+                  type: boolean
+              required:
+                - is_visible
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Brand'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /collections:
+    get:
+      summary: Get all Collections
+      operationId: getCollections
+      tags:
+        - Collections
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Collection'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+    delete:
+      summary: Delete Collections by their Uuids
+      operationId: deleteCollections
+      tags:
+        - Collections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    example: "object_uuid_string"
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ok
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /collections/{collection}/visibility:
+    patch:
+      summary: Update visibility
+      operationId: patchCollectionVisibility
+      parameters:
+        - $ref: '#/components/parameters/collectionParam'
+      tags:
+        - Collections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                is_visible:
+                  type: boolean
+              required:
+                - is_visible
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Collection'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /brands/{brand}/collections:
+    get:
+      summary: Get Collections of the Brand
+      operationId: getBrandCollections
+      tags:
+        - Brands
+        - Collections
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/brandParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Collection'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /articles:
+    get:
+      summary: Get all Products
+      operationId: getArticles
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/CustomerArticlePreview'
+                        - $ref: '#/components/schemas/ArticlePreview'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+    delete:
+      summary: Delete Products by their Uuids
+      operationId: deleteArticles
+      tags:
+        - Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    example: "object_uuid_string"
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ok
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /articles/search:
+    get:
+      summary: Search request for products
+      operationId: searchArticles
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: q
+          required: false
+          schema:
+            type: string
+          description: 'Optional search query. Usage: {"$or": [ {"$eq": ["field1", "value1"] }, {"$lt": ["field2", "value2"] } ] }'
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: Search by name of the article (using like)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/CustomerArticlePreview'
+                        - $ref: '#/components/schemas/ArticlePreview'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /articles/{article}:
+    get:
+      summary: Get Product by Uuid
+      operationId: getArticle
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/articleParam'
+        - $ref: '#/components/parameters/localeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+    patch:
+      summary: Update a product. This only works for own products not for products was shared from another clients.
+      operationId: patchUpdateArticle
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/articleParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Article'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /articles/{article}/visibility:
+    patch:
+      summary: Update visibility
+      operationId: patchArticleVisibility
+      parameters:
+        - $ref: '#/components/parameters/articleParam'
+      tags:
+        - Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                is_visible:
+                  type: boolean
+              required:
+                - is_visible
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    oneOf:
+                      - $ref: '#/components/schemas/CustomerArticlePreview'
+                      - $ref: '#/components/schemas/ArticlePreview'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /brands/{brand}/articles:
+    get:
+      summary: Get Brand's Products
+      operationId: getBrandArticles
+      tags:
+        - Products
+        - Brands
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/brandParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/CustomerArticlePreview'
+                        - $ref: '#/components/schemas/ArticlePreview'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /collections/{collection}/articles:
+    get:
+      summary: Display Products from a specific Collection
+      operationId: getCollectionArticles
+      tags:
+        - Products
+        - Collections
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/collectionParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/CustomerArticlePreview'
+                        - $ref: '#/components/schemas/ArticlePreview'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /brands/{brand}/collections/{collection}/articles:
+    get:
+      summary: Get Articles from a specific Brand Collection
+      operationId: getBrandCollectionArticles
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/brandParam'
+        - $ref: '#/components/parameters/collectionParam'
+        - $ref: '#/components/parameters/localeParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/CustomerArticlePreview'
+                        - $ref: '#/components/schemas/ArticlePreview'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /articles/available-vendor-codes:
+    get:
+      summary: Check exist vendor code
+      operationId: getArticleExistVendorCode
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: vendor_code
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: q
+          required: false
+          schema:
+            type: string
+          description: 'Optional search query. Usage: {"field": "value"}'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      vendor_codes:
+                        type: array
+                        items:
+                          type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /import/product-types:
+    get:
+      servers:
+        - description: API Endpoint
+          url: https://pim-client.wizart.ai/api/v2
+      summary: Get product types
+      operationId: getProductTypes
+      tags:
+        - Imports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      uuid:
+                        type: string
+                      attributes:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                          name:
+                            type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: [ ]
+        - Token: [ ]
+  /data-mappings/default/{productType}:
+    get:
+      summary: Get default mapping CSV
+      operationId: getDefaultDataMappingCSV
+      tags:
+        - Imports
+      parameters:
+        - in: path
+          name: productType
+          schema:
+            type: string
+            example: engineered_wood_flooring
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unautorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+  /data-mappings/create:
+    get:
+      summary: Depricated. Only for wallpaper product type. Get all of the fields available for mapping.
+      operationId: getDataMappingFields
+      tags:
+        - DataMappings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - name
+                        - is_mandatory
+                      properties:
+                        name:
+                          type: string
+                          example: brand_name
+                        is_mandatory:
+                          type: boolean
+                          example: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unautorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: [ ]
+        - Token: [ ]
+  /data-mappings/{mappingId}/imports:
+    post:
+      servers:
+        - description: Customer UI routes
+          url: https://pim-client.wizart.ai/api/customer
+      summary: Upload new import into Data mapping
+      operationId: postDataMappingImports
+      tags:
+        - Imports
+      parameters:
+        - in: path
+          name: mappingId
+          schema:
+            type: integer
+            example: 1
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  format: binary
+                  description: CSV file with mapping fields
+                archive:
+                  type: string
+                  format: binary
+                  description: ZIP archive with images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ImportLinked'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: [ ]
+        - Token: [ ]
+  /imports:
+    get:
+      summary: Get all of the user imports
+      operationId: getImports
+      tags:
+        - Imports
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ImportLinked'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - OAuth2: []
+        - Token: []
+
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+          example: accepted
+          enum:
+            - created
+            - accepted
+            - declined
+        time:
+          type: string
+          format: 'date-time'
+          example: "2000-01-01 00:00:00"
+    Article:
+      type: object
+      properties:
+        uuid:
+          type: string
+        vendor_code:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 65535
+        brand:
+          type: object
+          $ref: "#/components/schemas/Brand"
+        collection:
+          type: object
+          $ref: "#/components/schemas/Collection"
+        image_path:
+          type: string
+        availability:
+          type: string
+          enum:
+            - 'in_stock'
+            - 'out_of_stock'
+            - 'preorder'
+          description: 'Describes article availability.'
+        link:
+          type: array
+          items:
+            type: string
+          description: 'Link to article in the store.'
+        find_store_action:
+          type: string
+          description: 'Link to store page with "locations".'
+        add_to_cart_action:
+          type: string
+          description: 'Link to cart "add" action.'
+        layout:
+          type: string
+          enum:
+            - 'vertical'
+            - 'horizontal'
+          description: 'Article layout either vertical or horizontal.'
+        application_type:
+          type: array
+          items:
+            type: string
+            enum:
+              - 'wall'
+              - 'floor'
+          description: 'Article type either wall or floor.'
+        regular_price:
+          type: number
+          description: 'Regular article price (float).'
+        promotional_price:
+          type: string
+          description: 'Promotional article price (float).'
+        rapport:
+          minimum: 0
+          type: number
+        rapport_unit_uuid:
+          type: string
+        rapport_shift:
+          type: number
+          minimum: 0
+        rapport_shift_unit_uuid:
+          type: string
+        width:
+          type: number
+          minimum: 0
+        width_unit_uuid:
+          type: string
+        length:
+          type: number
+          minimum: 0
+        length_unit_uuid:
+          type: string
+        main_color_uuid:
+          type: string
+        texture_uuid:
+          type: string
+        coating_uuid:
+          type: string
+        basis_uuid:
+          type: string
+        waterproofness_uuid:
+          type: string
+        lightproofness_uuid:
+          type: string
+        kind_of_removal_uuid:
+          type: string
+        reverse_180:
+          type: boolean
+          default: false
+        mural:
+          type: boolean
+          default: false
+        scene_data:
+          type: object
+          properties:
+            material_maps:
+              type: object
+              properties:
+                specular:
+                  type: string
+                  nullable: true
+                displacement:
+                  type: string
+                  nullable: true
+                normal:
+                  type: string
+                  nullable: true
+                color:
+                  type: string
+                  nullable: true
+                material:
+                  type: string
+                  nullable: true
+            model:
+              type: string
+              nullable: true
+        sharing_status:
+          type: string
+          enum:
+            - shared
+            - not_shared
+            - owned
+    ArticleUpdate:
+      type: object
+      properties:
+        vendor_code:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 65535
+        image_path:
+          type: string
+        availability:
+          type: string
+          enum:
+            - 'in_stock'
+            - 'out_of_stock'
+            - 'preorder'
+          description: 'Describes article availability.'
+        link:
+          type: array
+          items:
+            type: string
+          description: 'Link to article in the store.'
+        find_store_action:
+          type: string
+          description: 'Link to store page with "locations".'
+        add_to_cart_action:
+          type: string
+          description: 'Link to cart "add" action.'
+        layout:
+          type: string
+          enum:
+            - 'vertical'
+            - 'horizontal'
+          description: 'Article layout either vertical or horizontal.'
+        application_type:
+          type: array
+          items:
+            type: string
+            enum:
+              - 'wall'
+              - 'floor'
+          description: 'Article type either wall or floor.'
+        regular_price:
+          type: array
+          items:
+            type: number
+            format: float
+            example: 33.12
+          description: 'Regular article price (float).'
+        promotional_price:
+          type: array
+          items:
+            type: number
+            format: float
+            example: 33.12
+          description: 'Promotional article price (float).'
+        rapport:
+          minimum: 0
+          type: number
+          description: 'Article pattern repeat (float)'
+        rapport_shift:
+          type: number
+          minimum: 0
+          description: 'Article rapport shift (float)'
+        width:
+          type: number
+          minimum: 0
+        length:
+          type: number
+          minimum: 0
+        reverse_180:
+          type: boolean
+          default: false
+          description: 'Reverse by 180°'
+        mural:
+          type: boolean
+          default: false
+          description: 'Wallpaper with the oversized pattern separated into panels'
+        transparency:
+          type: number
+          maximum: 100
+          minimum: 0
+          default: null
+          description: 'Article transparency (%)'
+        context:
+          type: array
+          items:
+            type: string
+            example: "Москва"
+          default: null
+          description: 'Article context'
+        model:
+          type: string
+          description: '3D Model path'
+          example: model_path
+        material_maps:
+          type: object
+          description: '3D Material Maps'
+          properties:
+            normal:
+              type: string
+              example: path_here_normal
+            color:
+              type: string
+              example: path_here_normal
+            specular:
+              type: string
+              example: path_here_specular
+            displacement:
+              type: string
+              example: path_here_displacement
+            material:
+              type: string
+              description: '3D Material path'
+              example: material_path
+    ArticlePreview:
+      type: object
+      properties:
+        uuid:
+          type: string
+        vendor_code:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 65535
+        brand_uuid:
+          type: string
+          format: uuid
+        collection_uuid:
+          type: string
+          format: uuid
+        image_path:
+          type: string
+        product_type:
+          type: object
+          properties:
+            uuid:
+              type: string
+            code:
+              type: string
+        width:
+          type: number
+          format: float
+        is_visisble:
+          type: boolean
+          default: false
+          description: Will be hidden if parameter general request performed (shown in customer-specific)
+        reverse_180:
+          type: boolean
+          default: false
+        mural:
+          type: boolean
+          default: false
+        links_by_context:
+          type: array
+          items:
+            type: string
+        link:
+          type: string
+        transparency:
+          type: number
+          maximum: 100
+          minimum: 0
+          default: null
+          description: 'Article transparency (%)'
+        scene_data:
+          type: object
+          properties:
+            type:
+              type: string
+            code:
+              type: string
+            is_default:
+              type: boolean
+            material_maps:
+              type: object
+              properties:
+                specular:
+                  type: string
+                  nullable: true
+                displacement:
+                  type: string
+                  nullable: true
+                normal:
+                  type: string
+                  nullable: true
+                color:
+                  type: string
+                  nullable: true
+                material:
+                  type: string
+                  nullable: true
+            model:
+              type: string
+              nullable: true
+        laying_patterns:
+          type: object
+          properties:
+            uuid:
+              type: string
+            laying_pattern_type:
+              type: string
+            image_path:
+              type: string
+            model_path:
+              type: string
+        default_laying_pattern:
+          type: string
+        availability:
+          type: string
+          enum:
+            - 'in_stock'
+            - 'out_of_stock'
+            - 'preorder'
+        repeatable:
+          type: boolean
+          description: 'Product types - wall_mural, wall_decals'
+        product_length:
+          type: number
+          format: float
+        customized_size:
+          type: boolean
+          description: 'Product types - wall_mural'
+        sku:
+          type: string
+        width_options:
+          type: array
+          items:
+            type: number
+            format: float
+            example: 33.12
+          description: 'Product types - wall_mural'
+        height_options:
+          type: array
+          items:
+            type: number
+            format: float
+            example: 33.12
+          description: 'Product types - wall_mural'
+        flip:
+          type: boolean
+          description: 'Product types - wall_mural'
+        black_white:
+          type: boolean
+          description: 'Product types - wall_mural'
+    CustomerArticlePreview:
+      type: object
+      properties:
+        uuid:
+          type: string
+        vendor_code:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 65535
+        brand:
+          $ref: '#/components/schemas/Brand'
+        collection:
+          type: object
+          properties:
+            uuid:
+              type: string
+            name:
+              type: string
+            image_path:
+              type: string
+            is_visible:
+              type: boolean
+              default: false
+              description: Will be hidden if parameter general request performed (shown in customer-specific)
+        image_path:
+          type: string
+        width:
+          type: number
+          format: float
+        is_visisble:
+          type: boolean
+          default: false
+          description: Will be hidden if parameter general request performed (shown in customer-specific)
+        scene_data:
+          type: object
+          properties:
+            type:
+              type: string
+            code:
+              type: string
+            is_default:
+              type: boolean
+            material_maps:
+              type: object
+              properties:
+                specular:
+                  type: string
+                  nullable: true
+                displacement:
+                  type: string
+                  nullable: true
+                normal:
+                  type: string
+                  nullable: true
+                color:
+                  type: string
+                  nullable: true
+                material:
+                  type: string
+                  nullable: true
+            model:
+              type: string
+              nullable: true
+        laying_patterns:
+          type: object
+          properties:
+            uuid:
+              type: string
+            laying_pattern_type:
+              type: string
+            image_path:
+              type: string
+            model_path:
+              type: string
+        default_laying_pattern:
+          type: string
+        availability:
+          type: string
+          enum:
+            - 'in_stock'
+            - 'out_of_stock'
+            - 'preorder'
+        repeatable:
+          type: boolean
+          description: 'Product types - wall_mural, wall_decals'
+        product_length:
+          type: number
+          format: float
+        customized_size:
+          type: boolean
+          description: 'Product types - wall_mural'
+        sku:
+          type: string
+        width_options:
+          type: array
+          items:
+            type: number
+            format: float
+            example: 33.12
+          description: 'Product types - wall_mural'
+        height_options:
+          type: array
+          items:
+            type: number
+            format: float
+            example: 33.12
+          description: 'Product types - wall_mural'
+        flip:
+          type: boolean
+          description: 'Product types - wall_mural'
+        black_white:
+          type: boolean
+          description: 'Product types - wall_mural'
+    GeneralProperty:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+    Brand:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        country_uuid:
+          type: string
+        image_path:
+          type: string
+        is_visible:
+          type: boolean
+          default: false
+          description: Will be hidden if parameter general request performed (shown in customer-specific)
+        partially_visible:
+          type: boolean
+          default: false
+          description: Will be hidden if parameter general request performed (shown in customer-specific)
+        is_default_cover:
+          type: boolean
+          default: true
+          description: By default, the default cover is one of the collection / brand articles.
+    Collection:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        brand:
+          $ref: '#/components/schemas/Brand'
+        image_path:
+          type: string
+        is_visible:
+          type: boolean
+          default: false
+          description: Will be hidden if parameter general request performed (shown in customer-specific)
+        partially_visible:
+          type: boolean
+          default: false
+          description: Will be hidden if parameter general request performed (shown in customer-specific)
+    Links:
+      type: object
+      properties:
+        first:
+          type: string
+          example: '/api/MODELs?page=1'
+        last:
+          type: string
+          example: '/api/MODELs?page=15'
+        prev:
+          type: string
+          example: '/api/MODELs?page=1'
+        next:
+          type: string
+          example: '/api/MODELs?page=3'
+    Meta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 2
+        from:
+          type: integer
+          example: 11
+        last_page:
+          type: integer
+          example: 15
+        path:
+          type: string
+          example: '/api/MODEL'
+        per_page:
+          type: string
+          example: 10
+        to:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 144
+    Unit:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        short_name:
+          type: string
+    DataMapping:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+        - $ref: "#/components/schemas/DataMapping_Actions"
+    DataMapping_Actions:
+      type: object
+      required:
+        - mapping
+      properties:
+        name:
+          type: string
+          example: MyMapping1
+        mapping:
+          type: object
+          required:
+            - basis
+            - unit
+            - color
+            - style
+            - coating
+            - country
+            - texture
+            - interior
+            - waterproofness
+            - lightproofness
+            - kind_of_removal
+          properties:
+            basis:
+              type: string
+              example: Basis
+            unit:
+              type: string
+              example: Inches
+            color:
+              type: string
+              example: Color
+            style:
+              type: string
+              example: Style
+            coating:
+              type: string
+              example: Coating
+            country:
+              type: string
+              example: Country
+            texture:
+              type: string
+              example: Texture
+            interior:
+              type: string
+              example: Interior
+            waterproofness:
+              type: string
+              example: WP
+            lightproofness:
+              type: string
+              example: LP
+            kind_of_removal:
+              type: string
+              example: KOR
+    Import:
+      type: object
+      properties:
+        path:
+          type: string
+        original_name:
+          type: string
+        extension:
+          type: string
+    ImportLinked:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+            status:
+              type: object
+              properties:
+                name:
+                  type: string
+            mapping_id:
+              type: integer
+        - $ref: "#/components/schemas/Import"
+    Customer:
+      type: object
+      properties:
+        pim_uuid:
+          type: string
+        client_name:
+          type: string
+        email:
+          type: string
+        start_date:
+          type: string
+        end_date:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        subscription:
+          type: object
+          properties:
+            type:
+              type: string
+            uuid:
+              type: string
+              format: uuid
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                code:
+                  type: string
+                is_upload_your_photo:
+                  type: boolean
+                products_limit:
+                  type: integer
+                renders_limit:
+                  type: integer
+                is_white_label_available:
+                  type: boolean
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: string
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'The given data was invalid.'
+        errors:
+          type: object
+          properties:
+            fieldName:
+              type: array
+              items:
+                type: string
+                example: 'The fieldName has required.'
+
+  parameters:
+    brandParam:
+      in: path
+      description: Brand Uuid
+      name: brand
+      schema:
+        type: string
+      required: true
+    articleParam:
+      in: path
+      description: Article Uuid
+      name: article
+      schema:
+        type: string
+      required: true
+    collectionParam:
+      in: path
+      description: Collection Uuid
+      name: collection
+      schema:
+        type: string
+      required: true
+    localeParam:
+      in: query
+      name: locale
+      required: false
+      description: Language
+      schema:
+        type: string
+        enum:
+          - en
+          - ru
+        default: en
+      allowReserved: true
+    pageParam:
+      in: query
+      name: page
+      required: false
+      description: Page of a pagination
+      schema:
+        type: integer
+        default: 1
+    productTypeParam:
+      in: query
+      name: product_type
+      required: false
+      description: Product type code (optional)
+      schema:
+        type: string
+        enum:
+          - wallpaper
+          - laminate
+        default: wallpaper
+    qParam:
+      in: query
+      name: q
+      required: false
+      description: 'Optional search query. Usage: equal - {"field": "value"}, like - {"field": {"$like" : "value"}}, in - {"field": {"$in" : [value1, value2, ...]}}'
+      schema:
+        type: string
+  responses:
+    Too_Many_Attempts:
+      description: Too Many Attempts.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Bad_Request:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Privileges_Error:
+      description: Privileges error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unprocessable_Entity:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    Token:
+      type: apiKey
+      description: Api token authentication.
+      name: 'Authorization'
+      in: header
+    OAuth2:
+      type: oauth2
+      description: OAuth2 authentication using password grant
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: https://pim-client.wizart.ai/oauth/token
+        password:
+          tokenUrl: https://pim-client.wizart.ai/oauth/token
+
+tags:
+  - name: Brands
+  - name: Collections
+  - name: Products
+  - name: 'DataSharing - consumer'
+  - name: Imports
+
+servers:
+  - url: https://pim-client.wizart.ai/api/customer
+    description: Default server

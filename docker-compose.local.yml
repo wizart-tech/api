@@ -1,0 +1,7 @@
+version: "3.3"
+
+services:
+  swagger:
+    restart: "no"
+    environment:
+      API_URL: /docs/openapi.yml
