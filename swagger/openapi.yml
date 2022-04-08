@@ -1,1926 +1,1879 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
-  version: 1.0.0
-  title: Wizart Data Logistic API
+  title: 'Wizart Data Logistic API'
+  contact:
+    name: Nikolay Motaev
+    email: nikolay.motaev@wizart.ai
+    url: https://wizart.ai
+  version: 2.1.0
+  description: "We developed our API to help our clients to manage their data. The API use REST approach based on JSON format. In our developing we are going to standardise the API and our goal is full supporting JSON:API v1.1 specification. More details about the specification you can found here [JSON:API Specification](https://jsonapi.org/format/1.1/).\n\nTo support old version of the API we are using [semantic versioning 2.0.0](https://semver.org/)\n\n## Versions lifetime\n\n| **Version** | **Release** | **End of supporting** |\n| --- | --- | --- |\n| 2.0.* |  | 01.06.2021 |\n| 2.1.* | coming soon | \\--- |\n\n# API Authentication and Authorization\n\nWe support two types of authorization: OAuth 2.0 and token-based authorization. We use OAuth 2.0 for data manipulation where we need the best possible data protection. The token based authorization we use to get the data. You can found any token in your account in [PIM Admin](https://pim-admin.wizart.ai/configuration/web). See the detail instruction [here](https://wizart.atlassian.net/wiki/spaces/WDP/pages/1744994307/API+authentication+and+authorization).\n\nFor each of our methods, the type of authorization supported was marked.\n\n| **Authorization type** | **Description** |\n| --- | --- |\n| Bearer Token | The authorization method based on OAuth 2.0. We usually use this method to process data. |\n| Web Token | We use it for web integrations on the client's websites. |\n| Android Token | We use it for integrations from android apps. |\n| Ios Token | We use it for integrations from Ios apps. |\n| Direct Token | We use this token for our partners who wants to build their own services based on our API. |\n\n **Note:** It is very important to use the correct token as we are optimizing our responses for devices and some API methods may not be available for another tokens.\n\n# Checking import status\n\n **Information:** ‘**importId**’ is the ID of the import. You can get it using [Other API methods | Getting-all-imported-data](https://wizart.atlassian.net/wiki/spaces/WDP/pages/2176712714/Other+API+methods#Getting-all-imported-data), or you can check the name of your log file.\n\nYou can come across the following statuses/notifications:\n\n| **Status** | **Description** | **State** |\n| --- | --- | --- |\n| uploading_files | Upload the files that you’re sending to the PIM. | intermediate status, import in progress |\n| validating_csv | Make sure your CSV has all required fields completed, as well as no changes in the structure of the original CSV template. If you get an error at this stage, please check [File upload requirements \\[wall product types\\]](https://wizart.atlassian.net/wiki/spaces/WDP/pages/2199289857) or [File upload requirements \\[flooring\\]](https://wizart.atlassian.net/wiki/spaces/WDP/pages/2198208539/File+upload+requirements+flooring) . | intermediate status, import in progress |\n| unpacking_archive | Extract the uploaded images from the archive. | intermediate status, import in progress |\n| checking_images | Make sure your CSV is not missing any images from the ZIP archive. | intermediate, in progress |\n| waiting_queue | Waiting for free workers to start the import. | in progress |\n| importing_data | The import is in progress. | in progress |\n| success | You’ll get the ‘success’ notification if the import was finished without any errors and warnings, which means that all the products **have been successfully imported**. | import finished |\n| warning | You’ll get the ‘warning’ notification if the import was finished without any errors but with some warnings. Your CSV file might contain some non-critical errors, for example, incorrect value type. **Some** of the products **might not have been imported**. Please note that **the products whose records contain errors will be skipped**, but the import of the other products will be still in progress. | import finished |\n| failure | If you see the ‘failure’ notification, the import was finished with some errors. Usually, it is a server error. **All the products before this error occurred** will be **successfully imported** to the PIM, **the other products will have to be re-imported**. Please note that **the products with a fatal error will stop the import process**; however, the products imported before the error occurred will be successfully imported. | import finished |\n\n## Integration Documentation\n\n *   [API Authentication And Authorization](https://wizart.atlassian.net/l/c/KCbDaQrX)\n *   [Import](https://wizart.atlassian.net/l/c/8MPtY1aw)\n\n\n# Support\n\nYou can create a bug report and ask questions via our official [GitHub repository](https://github.com/wizart-tech/api).\n\n"
+servers:
+  -
+    url: 'https://pim-client.wizart.ai/api/v2.1'
+    description: 'PIM Endpoint'
 paths:
-  /brands:
-    get:
-      summary: Get all Brands for current user
-      operationId: getBrands
-      tags:
-        - Brands
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/qParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Brand'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-    delete:
-      summary: Delete Brands by their Uuids for current user
-      operationId: deleteBrands
-      tags:
-        - Brands
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ids:
-                  type: array
-                  items:
-                    type: string
-                    example: "object_uuid_string"
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: ok
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /brands/{brand}/visibility:
-    patch:
-      summary: Update visibility. Show or hide from fitting room.
-      operationId: patchBrandVisibility
-      parameters:
-        - $ref: '#/components/parameters/brandParam'
-      tags:
-        - Brands
-      requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                is_visible:
-                  type: boolean
-              required:
-                - is_visible
-      responses:
-        '200':
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Brand'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /collections:
-    get:
-      summary: Get all Collections
-      operationId: getCollections
-      tags:
-        - Collections
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/qParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Collection'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-    delete:
-      summary: Delete Collections by their Uuids
-      operationId: deleteCollections
-      tags:
-        - Collections
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ids:
-                  type: array
-                  items:
-                    type: string
-                    example: "object_uuid_string"
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: ok
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /collections/{collection}/visibility:
-    patch:
-      summary: Update visibility
-      operationId: patchCollectionVisibility
-      parameters:
-        - $ref: '#/components/parameters/collectionParam'
-      tags:
-        - Collections
-      requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                is_visible:
-                  type: boolean
-              required:
-                - is_visible
-      responses:
-        '200':
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Collection'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /brands/{brand}/collections:
-    get:
-      summary: Get Collections of the Brand
-      operationId: getBrandCollections
-      tags:
-        - Brands
-        - Collections
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/brandParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Collection'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /articles:
-    get:
-      summary: Get all Products
-      operationId: getArticles
-      tags:
-        - Products
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/qParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      oneOf:
-                        - $ref: '#/components/schemas/CustomerArticlePreview'
-                        - $ref: '#/components/schemas/ArticlePreview'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-    delete:
-      summary: Delete Products by their Uuids
-      operationId: deleteArticles
-      tags:
-        - Products
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ids:
-                  type: array
-                  items:
-                    type: string
-                    example: "object_uuid_string"
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: ok
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /articles/search:
-    get:
-      summary: Search request for products
-      operationId: searchArticles
-      tags:
-        - Products
-      parameters:
-        - in: query
-          name: q
-          required: false
-          schema:
-            type: string
-          description: 'Optional search query. Usage: {"$or": [ {"$eq": ["field1", "value1"] }, {"$lt": ["field2", "value2"] } ] }'
-        - in: query
-          name: name
-          required: false
-          schema:
-            type: string
-          description: Search by name of the article (using like)
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      oneOf:
-                        - $ref: '#/components/schemas/CustomerArticlePreview'
-                        - $ref: '#/components/schemas/ArticlePreview'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /articles/{article}:
-    get:
-      summary: Get Product by Uuid
-      operationId: getArticle
-      tags:
-        - Products
-      parameters:
-        - $ref: '#/components/parameters/articleParam'
-        - $ref: '#/components/parameters/localeParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Article'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-    patch:
-      summary: Update a product. This only works for own products not for products was shared from another clients.
-      operationId: patchUpdateArticle
-      tags:
-        - Products
-      parameters:
-        - $ref: '#/components/parameters/articleParam'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ArticleUpdate'
-      responses:
-        '200':
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Article'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /articles/{article}/visibility:
-    patch:
-      summary: Update visibility
-      operationId: patchArticleVisibility
-      parameters:
-        - $ref: '#/components/parameters/articleParam'
-      tags:
-        - Products
-      requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                is_visible:
-                  type: boolean
-              required:
-                - is_visible
-      responses:
-        '200':
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    oneOf:
-                      - $ref: '#/components/schemas/CustomerArticlePreview'
-                      - $ref: '#/components/schemas/ArticlePreview'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /brands/{brand}/articles:
-    get:
-      summary: Get Brand's Products
-      operationId: getBrandArticles
-      tags:
-        - Products
-        - Brands
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/brandParam'
-        - $ref: '#/components/parameters/qParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      oneOf:
-                        - $ref: '#/components/schemas/CustomerArticlePreview'
-                        - $ref: '#/components/schemas/ArticlePreview'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /collections/{collection}/articles:
-    get:
-      summary: Display Products from a specific Collection
-      operationId: getCollectionArticles
-      tags:
-        - Products
-        - Collections
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/collectionParam'
-        - $ref: '#/components/parameters/qParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      oneOf:
-                        - $ref: '#/components/schemas/CustomerArticlePreview'
-                        - $ref: '#/components/schemas/ArticlePreview'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /brands/{brand}/collections/{collection}/articles:
-    get:
-      summary: Get Articles from a specific Brand Collection
-      operationId: getBrandCollectionArticles
-      tags:
-        - Products
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/brandParam'
-        - $ref: '#/components/parameters/collectionParam'
-        - $ref: '#/components/parameters/localeParam'
-        - $ref: '#/components/parameters/qParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      oneOf:
-                        - $ref: '#/components/schemas/CustomerArticlePreview'
-                        - $ref: '#/components/schemas/ArticlePreview'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
-  /articles/available-vendor-codes:
-    get:
-      summary: Check exist vendor code
-      operationId: getArticleExistVendorCode
-      tags:
-        - Products
-      parameters:
-        - in: query
-          name: vendor_code
-          schema:
-            type: string
-          required: true
-        - in: query
-          name: q
-          required: false
-          schema:
-            type: string
-          description: 'Optional search query. Usage: {"field": "value"}'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      vendor_codes:
-                        type: array
-                        items:
-                          type: string
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: []
-        - Token: []
   /import/product-types:
     get:
-      servers:
-        - description: API Endpoint
-          url: https://pim-client.wizart.ai/api/v2
-      summary: Get product types
-      operationId: getProductTypes
       tags:
+        - 'Product Types'
         - Imports
+      summary: 'API method to obtain product types.'
+      description: "\nProduct type is important part of our system.
+        Each product type has different properties and limitations.
+        \n
+        \n## Headers
+        \n
+        \n`Accept: application/json`
+        \n
+        \n## Permissions
+        \n
+        \n`*`
+        \n"
+      operationId: getProductTypes
       responses:
-        '200':
-          description: OK
+        200:
+          description: Success
           content:
             application/json:
               schema:
-                type: object
                 properties:
                   data:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      uuid:
-                        type: string
-                      attributes:
-                        type: object
-                        properties:
-                          code:
-                            type: string
-                          name:
-                            type: string
-        '400':
-          description: Bad Request
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductTypeSmallResource'
+                type: object
+        400:
+          description: 'Bad Request'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: 'Unauthenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
       security:
-        - OAuth2: [ ]
-        - Token: [ ]
-  /data-mappings/default/{productType}:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  '/data-mappings/default/{productTypeCode}':
     get:
-      summary: Get default mapping CSV
-      operationId: getDefaultDataMappingCSV
       tags:
-        - Imports
+        - 'Data Mappings'
+        - 'Imports'
+      summary: 'Download default data-mapping csv file by a product type.'
+      description: "This method return a csv file with default fields.\n## Headers\n`Accept: text/csv`\n## Permissions\n`*`\n"
+      operationId: getDefaultDataMapping
       parameters:
-        - in: path
-          name: productType
-          schema:
-            type: string
-            example: engineered_wood_flooring
-          required: true
+        - $ref: '#/components/parameters/productTypeCode'
       responses:
-        '200':
-          description: OK
+        200:
+          description: Success
           content:
             text/csv:
               schema:
-                type: array
-                items:
-                  type: string
-        '400':
-          description: Bad Request
+                type: string
+                format: binary
+        400:
+          description: 'Bad Request'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unautorized
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        500:
+          description: 'Unexpected Error'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/UnexpectedErrorResource'
       security:
-        - OAuth2: []
-        - Token: []
-  /data-mappings/create:
-    get:
-      summary: Depricated. Only for wallpaper product type. Get all of the fields available for mapping.
-      operationId: getDataMappingFields
-      tags:
-        - DataMappings
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - data
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      required:
-                        - name
-                        - is_mandatory
-                      properties:
-                        name:
-                          type: string
-                          example: brand_name
-                        is_mandatory:
-                          type: boolean
-                          example: true
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unautorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - OAuth2: [ ]
-        - Token: [ ]
-  /data-mappings/{mappingId}/imports:
-    post:
+        - AuthBearer: [ ]
       servers:
-        - description: Customer UI routes
-          url: https://pim-client.wizart.ai/api/customer
-      summary: Upload new import into Data mapping
-      operationId: postDataMappingImports
+        - url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  '/product-type/{productTypeCode}/import':
+    post:
+      externalDocs:
+        url: https://wizart.atlassian.net/wiki/spaces/WDP/pages/1236041763/Data+import+via+API
       tags:
         - Imports
+      summary: 'Begin an async import process by a product type.'
+      description: "Import new products. You have to use this method to send two files, namely **your_product.csv** and archive (**archive_name.zip**) with the corresponding images (product patterns). Please check our file [upload requirements](https://wizart.atlassian.net/wiki/spaces/WDP/pages/49545288/File+upload+requirements).\n\n### Note: the import works asynchronously. The method called 'Checking import status' helps you to understand the import is progressing. \n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n"
+      operationId: startImportByProductType
       parameters:
-        - in: path
-          name: mappingId
-          schema:
-            type: integer
-            example: 1
-          required: true
+        - $ref: '#/components/parameters/productTypeCode'
       requestBody:
+        description: 'Import data'
+        required: true
         content:
           multipart/form-data:
             schema:
-              type: object
               properties:
                 data:
+                  description: 'CSV file with mapping fields'
                   type: string
                   format: binary
-                  description: CSV file with mapping fields
                 archive:
+                  description: 'ZIP archive with images'
                   type: string
                   format: binary
-                  description: ZIP archive with images
+              type: object
       responses:
-        '200':
-          description: OK
+        200:
+          description: Success
           content:
             application/json:
               schema:
-                type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/ImportLinked'
-        '400':
-          description: Bad Request
+                    $ref: '#/components/schemas/ImportDataResource'
+                type: object
+        400:
+          description: 'Bad Request'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        404:
+          description: 'Not Found'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
       security:
-        - OAuth2: [ ]
-        - Token: [ ]
-  /imports:
+        - AuthBearer: [ ]
+      servers:
+        - url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  /imports/last:
     get:
-      summary: Get all of the user imports
-      operationId: getImports
       tags:
         - Imports
+        - 'Checking Import'
+      summary: 'Get the last import information.'
+      description: "This method return information about the last import. This method useful to check information\n about the last import progress.\n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n"
+      operationId: getLastImport
       responses:
-        '200':
-          description: OK
+        200:
+          description: Success
           content:
             application/json:
               schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ImportDataResource'
                 type: object
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        - AuthBearer: [ ]
+      servers:
+        - url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  /imports:
+    get:
+      tags:
+        - Imports
+        - 'Checking Import'
+      summary: 'Get imports list.'
+      description: "This method returns list of imports.\n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n"
+      operationId: getImportList
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
                 properties:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ImportLinked'
-                  links:
-                    $ref: '#/components/schemas/Links'
-                  meta:
-                    $ref: '#/components/schemas/Meta'
-        '400':
-          description: Bad Request
+                      $ref: '#/components/schemas/ImportDataResource'
+                type: object
+        400:
+          description: 'Bad Request'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        default:
-          description: Unexpected error
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        404:
+          description: 'Not Found'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
       security:
-        - OAuth2: []
-        - Token: []
+        - AuthBearer: [ ]
+      servers:
+        - url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  '/imports/{importId}':
+    get:
+      tags:
+        - Imports
+        - 'Checking Import'
+      summary: 'Get specific import by Id'
+      description: "This method return information by import ID.\n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n"
+      operationId: getImportById
+      parameters:
+        - $ref: '#/components/parameters/importId'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ImportDataResource'
+                type: object
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        - AuthBearer: [ ]
+      servers:
+        - url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
 
 components:
   schemas:
-    Status:
-      type: object
-      properties:
-        status:
-          type: string
-          example: accepted
-          enum:
-            - created
-            - accepted
-            - declined
-        time:
-          type: string
-          format: 'date-time'
-          example: "2000-01-01 00:00:00"
-    Article:
-      type: object
-      properties:
-        uuid:
-          type: string
-        vendor_code:
-          type: string
-          maxLength: 255
-        name:
-          type: string
-          minLength: 3
-          maxLength: 255
-        description:
-          type: string
-          maxLength: 65535
-        brand:
-          type: object
-          $ref: "#/components/schemas/Brand"
-        collection:
-          type: object
-          $ref: "#/components/schemas/Collection"
-        image_path:
-          type: string
-        availability:
-          type: string
-          enum:
-            - 'in_stock'
-            - 'out_of_stock'
-            - 'preorder'
-          description: 'Describes article availability.'
-        link:
-          type: array
-          items:
-            type: string
-          description: 'Link to article in the store.'
-        find_store_action:
-          type: string
-          description: 'Link to store page with "locations".'
-        add_to_cart_action:
-          type: string
-          description: 'Link to cart "add" action.'
-        layout:
-          type: string
-          enum:
-            - 'vertical'
-            - 'horizontal'
-          description: 'Article layout either vertical or horizontal.'
-        application_type:
-          type: array
-          items:
-            type: string
-            enum:
-              - 'wall'
-              - 'floor'
-          description: 'Article type either wall or floor.'
-        regular_price:
-          type: number
-          description: 'Regular article price (float).'
-        promotional_price:
-          type: string
-          description: 'Promotional article price (float).'
-        rapport:
-          minimum: 0
-          type: number
-        rapport_unit_uuid:
-          type: string
-        rapport_shift:
-          type: number
-          minimum: 0
-        rapport_shift_unit_uuid:
-          type: string
-        width:
-          type: number
-          minimum: 0
-        width_unit_uuid:
-          type: string
-        length:
-          type: number
-          minimum: 0
-        length_unit_uuid:
-          type: string
-        main_color_uuid:
-          type: string
-        texture_uuid:
-          type: string
-        coating_uuid:
-          type: string
-        basis_uuid:
-          type: string
-        waterproofness_uuid:
-          type: string
-        lightproofness_uuid:
-          type: string
-        kind_of_removal_uuid:
-          type: string
-        reverse_180:
-          type: boolean
-          default: false
-        mural:
-          type: boolean
-          default: false
-        scene_data:
-          type: object
-          properties:
-            material_maps:
-              type: object
-              properties:
-                specular:
-                  type: string
-                  nullable: true
-                displacement:
-                  type: string
-                  nullable: true
-                normal:
-                  type: string
-                  nullable: true
-                color:
-                  type: string
-                  nullable: true
-                material:
-                  type: string
-                  nullable: true
-            model:
-              type: string
-              nullable: true
-        sharing_status:
-          type: string
-          enum:
-            - shared
-            - not_shared
-            - owned
-    ArticleUpdate:
-      type: object
-      properties:
-        vendor_code:
-          type: string
-          maxLength: 255
-        name:
-          type: string
-          minLength: 3
-          maxLength: 255
-        description:
-          type: string
-          maxLength: 65535
-        image_path:
-          type: string
-        availability:
-          type: string
-          enum:
-            - 'in_stock'
-            - 'out_of_stock'
-            - 'preorder'
-          description: 'Describes article availability.'
-        link:
-          type: array
-          items:
-            type: string
-          description: 'Link to article in the store.'
-        find_store_action:
-          type: string
-          description: 'Link to store page with "locations".'
-        add_to_cart_action:
-          type: string
-          description: 'Link to cart "add" action.'
-        layout:
-          type: string
-          enum:
-            - 'vertical'
-            - 'horizontal'
-          description: 'Article layout either vertical or horizontal.'
-        application_type:
-          type: array
-          items:
-            type: string
-            enum:
-              - 'wall'
-              - 'floor'
-          description: 'Article type either wall or floor.'
-        regular_price:
-          type: array
-          items:
-            type: number
-            format: float
-            example: 33.12
-          description: 'Regular article price (float).'
-        promotional_price:
-          type: array
-          items:
-            type: number
-            format: float
-            example: 33.12
-          description: 'Promotional article price (float).'
-        rapport:
-          minimum: 0
-          type: number
-          description: 'Article pattern repeat (float)'
-        rapport_shift:
-          type: number
-          minimum: 0
-          description: 'Article rapport shift (float)'
-        width:
-          type: number
-          minimum: 0
-        length:
-          type: number
-          minimum: 0
-        reverse_180:
-          type: boolean
-          default: false
-          description: 'Reverse by 180°'
-        mural:
-          type: boolean
-          default: false
-          description: 'Wallpaper with the oversized pattern separated into panels'
-        transparency:
-          type: number
-          maximum: 100
-          minimum: 0
-          default: null
-          description: 'Article transparency (%)'
-        context:
-          type: array
-          items:
-            type: string
-            example: "Москва"
-          default: null
-          description: 'Article context'
-        model:
-          type: string
-          description: '3D Model path'
-          example: model_path
-        material_maps:
-          type: object
-          description: '3D Material Maps'
-          properties:
-            normal:
-              type: string
-              example: path_here_normal
-            color:
-              type: string
-              example: path_here_normal
-            specular:
-              type: string
-              example: path_here_specular
-            displacement:
-              type: string
-              example: path_here_displacement
-            material:
-              type: string
-              description: '3D Material path'
-              example: material_path
-    ArticlePreview:
-      type: object
-      properties:
-        uuid:
-          type: string
-        vendor_code:
-          type: string
-          maxLength: 255
-        name:
-          type: string
-          minLength: 3
-          maxLength: 255
-        description:
-          type: string
-          maxLength: 65535
-        brand_uuid:
-          type: string
-          format: uuid
-        collection_uuid:
-          type: string
-          format: uuid
-        image_path:
-          type: string
-        product_type:
-          type: object
-          properties:
-            uuid:
-              type: string
-            code:
-              type: string
-        width:
-          type: number
-          format: float
-        is_visisble:
-          type: boolean
-          default: false
-          description: Will be hidden if parameter general request performed (shown in customer-specific)
-        reverse_180:
-          type: boolean
-          default: false
-        mural:
-          type: boolean
-          default: false
-        links_by_context:
-          type: array
-          items:
-            type: string
-        link:
-          type: string
-        transparency:
-          type: number
-          maximum: 100
-          minimum: 0
-          default: null
-          description: 'Article transparency (%)'
-        scene_data:
-          type: object
-          properties:
-            type:
-              type: string
-            code:
-              type: string
-            is_default:
-              type: boolean
-            material_maps:
-              type: object
-              properties:
-                specular:
-                  type: string
-                  nullable: true
-                displacement:
-                  type: string
-                  nullable: true
-                normal:
-                  type: string
-                  nullable: true
-                color:
-                  type: string
-                  nullable: true
-                material:
-                  type: string
-                  nullable: true
-            model:
-              type: string
-              nullable: true
-        laying_patterns:
-          type: object
-          properties:
-            uuid:
-              type: string
-            laying_pattern_type:
-              type: string
-            image_path:
-              type: string
-            model_path:
-              type: string
-        default_laying_pattern:
-          type: string
-        availability:
-          type: string
-          enum:
-            - 'in_stock'
-            - 'out_of_stock'
-            - 'preorder'
-        repeatable:
-          type: boolean
-          description: 'Product types - wall_mural, wall_decals'
-        product_length:
-          type: number
-          format: float
-        customized_size:
-          type: boolean
-          description: 'Product types - wall_mural'
-        sku:
-          type: string
-        width_options:
-          type: array
-          items:
-            type: number
-            format: float
-            example: 33.12
-          description: 'Product types - wall_mural'
-        height_options:
-          type: array
-          items:
-            type: number
-            format: float
-            example: 33.12
-          description: 'Product types - wall_mural'
-        flip:
-          type: boolean
-          description: 'Product types - wall_mural'
-        black_white:
-          type: boolean
-          description: 'Product types - wall_mural'
-    CustomerArticlePreview:
-      type: object
-      properties:
-        uuid:
-          type: string
-        vendor_code:
-          type: string
-          maxLength: 255
-        name:
-          type: string
-          minLength: 3
-          maxLength: 255
-        description:
-          type: string
-          maxLength: 65535
-        brand:
-          $ref: '#/components/schemas/Brand'
-        collection:
-          type: object
-          properties:
-            uuid:
-              type: string
-            name:
-              type: string
-            image_path:
-              type: string
-            is_visible:
-              type: boolean
-              default: false
-              description: Will be hidden if parameter general request performed (shown in customer-specific)
-        image_path:
-          type: string
-        width:
-          type: number
-          format: float
-        is_visisble:
-          type: boolean
-          default: false
-          description: Will be hidden if parameter general request performed (shown in customer-specific)
-        scene_data:
-          type: object
-          properties:
-            type:
-              type: string
-            code:
-              type: string
-            is_default:
-              type: boolean
-            material_maps:
-              type: object
-              properties:
-                specular:
-                  type: string
-                  nullable: true
-                displacement:
-                  type: string
-                  nullable: true
-                normal:
-                  type: string
-                  nullable: true
-                color:
-                  type: string
-                  nullable: true
-                material:
-                  type: string
-                  nullable: true
-            model:
-              type: string
-              nullable: true
-        laying_patterns:
-          type: object
-          properties:
-            uuid:
-              type: string
-            laying_pattern_type:
-              type: string
-            image_path:
-              type: string
-            model_path:
-              type: string
-        default_laying_pattern:
-          type: string
-        availability:
-          type: string
-          enum:
-            - 'in_stock'
-            - 'out_of_stock'
-            - 'preorder'
-        repeatable:
-          type: boolean
-          description: 'Product types - wall_mural, wall_decals'
-        product_length:
-          type: number
-          format: float
-        customized_size:
-          type: boolean
-          description: 'Product types - wall_mural'
-        sku:
-          type: string
-        width_options:
-          type: array
-          items:
-            type: number
-            format: float
-            example: 33.12
-          description: 'Product types - wall_mural'
-        height_options:
-          type: array
-          items:
-            type: number
-            format: float
-            example: 33.12
-          description: 'Product types - wall_mural'
-        flip:
-          type: boolean
-          description: 'Product types - wall_mural'
-        black_white:
-          type: boolean
-          description: 'Product types - wall_mural'
-    GeneralProperty:
-      type: object
-      properties:
-        uuid:
-          type: string
-        name:
-          type: string
-    Brand:
-      type: object
-      properties:
-        uuid:
-          type: string
-        name:
-          type: string
-        country_uuid:
-          type: string
-        image_path:
-          type: string
-        is_visible:
-          type: boolean
-          default: false
-          description: Will be hidden if parameter general request performed (shown in customer-specific)
-        partially_visible:
-          type: boolean
-          default: false
-          description: Will be hidden if parameter general request performed (shown in customer-specific)
-        is_default_cover:
-          type: boolean
-          default: true
-          description: By default, the default cover is one of the collection / brand articles.
-    Collection:
-      type: object
-      properties:
-        uuid:
-          type: string
-        name:
-          type: string
-        brand:
-          $ref: '#/components/schemas/Brand'
-        image_path:
-          type: string
-        is_visible:
-          type: boolean
-          default: false
-          description: Will be hidden if parameter general request performed (shown in customer-specific)
-        partially_visible:
-          type: boolean
-          default: false
-          description: Will be hidden if parameter general request performed (shown in customer-specific)
-    Links:
-      type: object
-      properties:
-        first:
-          type: string
-          example: '/api/MODELs?page=1'
-        last:
-          type: string
-          example: '/api/MODELs?page=15'
-        prev:
-          type: string
-          example: '/api/MODELs?page=1'
-        next:
-          type: string
-          example: '/api/MODELs?page=3'
-    Meta:
-      type: object
-      properties:
-        current_page:
-          type: integer
-          example: 2
-        from:
-          type: integer
-          example: 11
-        last_page:
-          type: integer
-          example: 15
-        path:
-          type: string
-          example: '/api/MODEL'
-        per_page:
-          type: string
-          example: 10
-        to:
-          type: integer
-          example: 20
-        total:
-          type: integer
-          example: 144
-    Unit:
-      type: object
-      properties:
-        uuid:
-          type: string
-        name:
-          type: string
-        short_name:
-          type: string
-    DataMapping:
-      allOf:
-        - type: object
-          properties:
-            id:
-              type: integer
-              example: 1
-        - $ref: "#/components/schemas/DataMapping_Actions"
-    DataMapping_Actions:
-      type: object
+    BadRequestObject:
+      title: 'Bad Request Object'
+      description: 'Bad Request Object'
       required:
-        - mapping
+        - 'id, status, title, detail'
       properties:
-        name:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
           type: string
-          example: MyMapping1
-        mapping:
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '400'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: 'Bad Request.'
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: 'Bad Request.'
+      type: object
+    BrandObject:
+      title: 'Brand Object'
+      description: 'Brand Object'
+      required:
+        - 'type, uuid'
+      properties:
+        type:
+          title: type
+          description: 'Type of resource'
+          type: string
+          format: string
+          example: brands
+        id:
+          title: id
+          description: 'ID of resource'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          title: attributes
+          description: 'Brand''s attributes'
+          properties:
+            name:
+              title: name
+              description: 'New name of the brand'
+              type: string
+              format: string
           type: object
-          required:
-            - basis
-            - unit
-            - color
-            - style
-            - coating
-            - country
-            - texture
-            - interior
-            - waterproofness
-            - lightproofness
-            - kind_of_removal
-          properties:
-            basis:
-              type: string
-              example: Basis
-            unit:
-              type: string
-              example: Inches
-            color:
-              type: string
-              example: Color
-            style:
-              type: string
-              example: Style
-            coating:
-              type: string
-              example: Coating
-            country:
-              type: string
-              example: Country
-            texture:
-              type: string
-              example: Texture
-            interior:
-              type: string
-              example: Interior
-            waterproofness:
-              type: string
-              example: WP
-            lightproofness:
-              type: string
-              example: LP
-            kind_of_removal:
-              type: string
-              example: KOR
-    Import:
+          format: object
       type: object
+    CollectionObject:
+      title: 'Collection Object'
+      description: 'Collection Object'
+      required:
+        - 'type, uuid'
       properties:
-        path:
+        type:
+          title: type
+          description: 'Type of resource'
           type: string
-        original_name:
+          format: string
+          example: collections
+        id:
+          title: id
+          description: 'ID of resource'
           type: string
-        extension:
-          type: string
-    ImportLinked:
-      allOf:
-        - type: object
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          title: attributes
+          description: 'Collection''s attributes'
           properties:
-            id:
-              type: integer
-            status:
-              type: object
-              properties:
-                name:
-                  type: string
-            mapping_id:
-              type: integer
-        - $ref: "#/components/schemas/Import"
-    Customer:
+            name:
+              title: name
+              description: 'New name of the collection'
+              type: string
+              format: string
+          type: string
+          format: object
       type: object
+    CollectionProduct:
+      title: 'Collection Product'
+      description: 'Collection Product Request object'
+      required:
+        - type
+        - id
       properties:
-        pim_uuid:
+        id:
+          title: id
+          description: 'Product UUID'
           type: string
-        client_name:
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        type:
+          title: type
+          description: 'Resource Type'
           type: string
-        email:
+          format: string
+          example: product
+      type: object
+    CustomerSubscriptionUpdate:
+      title: 'Customer Subscription Update Resource'
+      description: 'Customer Subscription Update Resource'
+      properties:
+        subscription_uuid:
+          title: uuid
+          description: 'identifire of the subscription'
           type: string
-        start_date:
-          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        products_limit:
+          description: 'Products limit'
+          type: integer
+          format: int32
+          example: '1000'
+        renders_limit:
+          description: 'Renders limit'
+          type: integer
+          format: int32
+          example: '1000'
         end_date:
+          description: 'End Date'
           type: string
-        roles:
+          format: date
+      type: object
+    ErrorObject:
+      title: 'Error Object'
+      description: 'Error Object'
+      required:
+        - 'id, status, title, detail'
+      properties:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '500'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: 'Server error.'
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: 'Server error.'
+      type: object
+    NotFoundObject:
+      title: 'Not Found Object'
+      description: 'Not Found Object'
+      required:
+        - 'id, status, title, detail'
+      properties:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '404'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: 'Model not found.'
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: 'Model not found.'
+      type: object
+    Product:
+      title: Product
+      description: 'Product Request object'
+      required:
+        - type
+        - vendor_code
+      properties:
+        type:
+          title: type
+          description: 'Resource Type'
+          type: string
+          format: string
+          example: product
+        vendor_code:
+          title: vendor_code
+          description: 'Vendor code'
+          format: string
+          example: product-U1
+      type: object
+    UnauthenticatedObject:
+      title: 'Unauthenticated Object'
+      description: 'Unauthenticated Object'
+      required:
+        - 'id, status, title, detail'
+      properties:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '401'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: Unauthenticated.
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: Unauthenticated.
+      type: object
+    UnauthorizedObject:
+      title: 'Unathorized Object'
+      description: 'Unathorized Object'
+      required:
+        - 'id, status, title, detail'
+      properties:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '403'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: Unathorized.
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: Unathorized.
+      type: object
+    ValidationErrorObject:
+      title: 'Validation Error Object'
+      description: 'Validation Error Object'
+      required:
+        - 'id, status, title, detail'
+      properties:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '422'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: 'The name is required.'
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: 'The name is required.'
+        source:
+          title: source
+          description: 'An object containing references to the primary source of the error.'
+          properties:
+            parameter:
+              title: detail
+              description: 'A string indicating which parameter caused the error.'
+              type: string
+              format: string
+              example: name
+          type: object
+      type: object
+    VisibilityObject:
+      title: 'Visibility Object'
+      description: 'Visibility Object'
+      required:
+        - is_visible
+      properties:
+        is_visible:
+          title: is_visible
+          description: 'Visibility flag'
+          type: boolean
+          format: boolean
+          example: 'true'
+      type: object
+    AcceptedResource:
+      title: Accepted
+      description: 'Accepted Response'
+      properties:
+        message:
+          title: message
+          description: 'result message'
+          type: string
+          format: string
+          example: ok
+      type: object
+    BadRequestResource:
+      title: 'Bad Request'
+      description: 'Bad Request Response'
+      properties:
+        errors:
+          description: Errors
+          type: array
+          items:
+            $ref: '#/components/schemas/BadRequestObject'
+      type: object
+    ClientStatusResource:
+      title: 'Status Resource'
+      description: 'Status Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: statuses
+        id:
+          title: id
+          description: 'identifire of the status'
+          type: string
+          format: string
+          example: active
+        attributes:
+          description: 'Attributes of the status'
+          properties:
+            name:
+              description: 'Status name'
+              type: string
+              format: string
+              example: Active
+            code:
+              description: 'Status code'
+              type: string
+              format: string
+              example: active
+          type: object
+        relationships:
+          description: 'Related state'
+          properties:
+            state:
+              description: 'Status state'
+              properties:
+                data:
+                  description: Data
+                  properties:
+                    type:
+                      title: type
+                      description: 'State type'
+                      type: string
+                      format: string
+                      example: states
+                    id:
+                      title: id
+                      description: 'State code'
+                      type: string
+                      format: string
+                      example: disabled
+                  type: object
+              type: object
+          type: object
+      type: object
+    ExternalCreateUserResource:
+      title: 'Create External User Resource'
+      description: 'Create External User Resource'
+      properties:
+        email:
+          title: email
+          description: Email
+          type: string
+          format: string
+          example: test@gmail.com
+        client_name:
+          title: client_name
+          description: 'Client Name'
+          type: string
+          format: string
+          example: Nick
+        role_uuid:
+          title: role_uuid
+          description: 'ID or role'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        message:
+          title: message
+          description: Message
+          type: string
+          format: string
+          example: 'Some my notice'
+        business_type:
+          title: business_type
+          description: 'Business Type'
           type: array
           items:
             type: string
-        subscription:
+        country:
+          title: country
+          description: Country
+          type: string
+          format: string
+          example: Hrodna
+        product_type:
+          title: product_type
+          description: 'Product Type'
+          type: array
+          items:
+            type: string
+        brands:
+          title: brands
+          description: Brands
+          type: array
+          items:
+            type: string
+        phone:
+          title: phone
+          description: Phone
+          type: string
+          format: string
+        name:
+          title: name
+          description: Name
+          type: string
+          format: string
+        subscription_code:
+          title: subscription_code
+          description: 'Subscription Code'
+          type: string
+          format: string
+        carrotquest_uid:
+          title: carrotquest_uid
+          description: 'CQ Code'
+          type: string
+          format: string
+        source:
+          title: source
+          description: Source
+          type: string
+          format: string
+      type: object
+    FullProductResource:
+      title: Product
+      description: 'Product Response'
+    ImportDataResource:
+      title: 'Import Data Resource'
+      description: 'Import Data Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: import_data
+        id:
+          title: id
+          description: 'Identifire of the import'
+          type: string
+          format: string
+          example: '123'
+        attributes:
+          description: 'Attributes of the import data'
+          properties:
+            path:
+              description: Path
+              type: string
+            original_name:
+              description: 'Original name'
+              type: string
+            status:
+              description: Status
+              type: string
+            status_message:
+              description: 'Status Message'
+              type: string
+            result:
+              description: Result
+              type: string
+            mapping_id:
+              description: 'Mapping ID'
+              type: string
+            created_at:
+              description: 'Created At'
+              type: string
+            updated_at:
+              description: 'Updated At'
+              type: string
+            timezone:
+              description: Timezone
+              type: string
           type: object
+      type: object
+    ImportHotColdDataResource:
+      title: 'Import Hot and Cold Resource'
+      description: 'Import Hot and Cold Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: articles
+        id:
+          title: id
+          description: 'Identifire of the article'
+          type: string
+          format: string
+          example: 0755cd32-cd4e-429d-a77b-323287ab2fcc
+        attributes:
+          description: 'Attributes of the article'
+          properties:
+            name:
+              description: 'Article name'
+              type: string
+              format: string
+              example: Spirit_35_0519_06
+          type: object
+        relationships:
+          description: 'Collection of article'
+          properties:
+            collection:
+              description: 'Collection of article'
+              properties:
+                data:
+                  description: Data
+                  properties:
+                    type:
+                      title: type
+                      description: 'Collection of article'
+                      type: string
+                      format: string
+                      example: collection
+                    id:
+                      title: id
+                      description: 'Identifire of the collection'
+                      type: string
+                      format: string
+                      example: 0755cd32-cd4e-429d-a77b-323287ab2fcc
+                  type: object
+              type: object
+          type: object
+      type: object
+    LocaleResource:
+      title: 'Subscription Resource'
+      description: 'Subscription Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: locales
+        id:
+          title: code
+          description: 'locale code'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: ua
+        attributes:
+          description: 'Attributes of the subscription'
+          properties:
+            name:
+              description: 'Locale name'
+              type: string
+              format: string
+              example: Ukrainian
+          type: object
+      type: object
+    NotFoundResource:
+      title: 'Not Found'
+      description: 'Not Found Response'
+      properties:
+        errors:
+          description: Errors
+          type: array
+          items:
+            $ref: '#/components/schemas/NotFoundObject'
+      type: object
+    PaginationPageResource:
+      title: 'Pagination Page Resource'
+      description: 'Pagination Page Resource'
+      properties:
+        type:
+          title: type
+          description: 'Pagination page type'
+          type: string
+          format: string
+          example: pagination-pages
+        uuid:
+          title: uuid
+          description: 'Pagination page uuid'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Properties of pagination page'
+          properties:
+            pagination_page:
+              description: 'Pagination page number'
+              type: integer
+              format: int32
+          type: object
+      type: object
+    ProductFilterResource:
+      title: 'Product Filter Resource'
+      description: 'Product Filter Resource'
+      properties:
+        type:
+          title: type
+          description: 'Object type'
+          type: string
+          format: string
+          example: filters
+        relationships:
+          description: 'Related filters'
+          properties:
+            color:
+              description: 'Filter name'
+              properties:
+                data:
+                  description: Data
+                  properties:
+                    uuid:
+                      title: uuid
+                      description: 'ID of the object'
+                      type: string
+                      format: string
+                      maxLength: 36
+                      minLength: 36
+                      example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                    type:
+                      description: Type
+                      type: string
+                      format: string
+                      example: colors
+                  type: object
+              type: object
+          type: object
+        included:
+          description: 'Included filters'
+          properties:
+            included:
+              description: 'Included data for filters'
+              properties:
+                uuid:
+                  title: uuid
+                  description: 'ID of the object'
+                  type: string
+                  format: string
+                  maxLength: 36
+                  minLength: 36
+                  example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                type:
+                  description: Type
+                  type: string
+                  format: string
+                  example: colors
+                attributes:
+                  description: 'Attributes of the included'
+                  properties:
+                    value:
+                      description: Value
+                      type: string
+                      format: string
+                      example: black
+                    code:
+                      description: Code
+                      type: string
+                      format: string
+                      example: color
+                    locale:
+                      description: Locale
+                      type: string
+                      format: string
+                      example: en
+                  type: object
+              type: object
+          type: object
+      type: object
+    ProductTypeResource:
+      title: 'Product Type'
+      description: 'Product Type Response'
+      properties:
+        type:
+          title: type
+          description: 'type of product'
+          type: string
+          format: string
+          example: product_type
+        uuid:
+          title: uuid
+          description: 'identifire of product type'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        properties:
+          description: 'Properties of product type'
+          properties:
+            propertyName:
+              description: 'Property name'
+              properties:
+                type:
+                  description: 'Property type'
+                  type: string
+                  format: string
+                  example: bool
+                attributes:
+                  description: 'Property attributes'
+                  properties:
+                    code:
+                      description: 'Property Code'
+                      format: string
+                      example: surface
+                    default_value:
+                      description: 'Default Value'
+                      format: string
+                      example: wall
+                    is_required:
+                      description: 'Is requared flag'
+                      format: boolean
+                      example: 'true'
+                    translation_code:
+                      description: 'Translation Code'
+                      format: string
+                      example: surface
+                    translations:
+                      description: Translations
+                      format: string
+                      example: Surface
+                    type:
+                      description: Type
+                      format: string
+                  type: object
+              type: object
+          type: object
+      type: object
+    ProductTypeSmallResource:
+      title: 'Product Type Small'
+      description: 'Product Type Small Response'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: product_type
+        id:
+          title: id
+          description: 'identifire of product type'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Attributes of product type'
+          properties:
+            propertyName:
+              description: 'Property name'
+              properties:
+                type:
+                  description: 'Code of product type'
+                  type: string
+                  format: string
+                  example: wallpaper
+                name:
+                  description: 'Name of product type'
+                  type: string
+                  format: string
+                  example: Wallpaper
+              type: object
+          type: object
+      type: object
+    ProviderBrandsSearchResource:
+      title: 'Provider Brand Search Resource'
+      description: 'Provider Brand Search Resource'
+      properties:
+        type:
+          title: type
+          description: 'Object type'
+          type: string
+          format: string
+          example: provider-brands-search
+        uuid:
+          title: uuid
+          description: 'ID of the object'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Properties of pagination page'
+          properties:
+            name:
+              description: Name
+              type: string
+              format: string
+            image_path:
+              description: 'Image path'
+              type: string
+              format: string
+            is_visible:
+              description: 'Is visible'
+              type: boolean
+              format: boolean
+              example: true
+            sharing_status:
+              description: 'Sharing status'
+              type: string
+              format: string
+          type: object
+        relationships:
+          description: 'Related product'
+          properties:
+            manufacturer:
+              description: 'Manafacturer product'
+              properties:
+                data:
+                  description: Data
+                  properties:
+                    uuid:
+                      title: uuid
+                      description: 'ID of the object'
+                      type: string
+                      format: string
+                      maxLength: 36
+                      minLength: 36
+                      example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                    name:
+                      description: 'Sharing status'
+                      type: string
+                      format: string
+                  type: object
+              type: object
+          type: object
+      type: object
+    ProviderCollectionSearchResource:
+      title: 'Provider Collection Search Resource'
+      description: 'Provider Collection Search Resource'
+      properties:
+        type:
+          title: type
+          description: 'Object type'
+          type: string
+          format: string
+          example: provider-collections-search
+        uuid:
+          title: uuid
+          description: 'ID of the object'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Properties of pagination page'
+          properties:
+            name:
+              description: Name
+              type: string
+              format: string
+            image_path:
+              description: 'Image path'
+              type: string
+              format: string
+            is_visible:
+              description: 'Is visible'
+              type: boolean
+              format: boolean
+              example: true
+            sharing_status:
+              description: 'Sharing status'
+              type: string
+              format: string
+            is_hot_data_updated:
+              description: 'Is hot data updated'
+              type: boolean
+              format: boolean
+            date_last_update:
+              description: 'Last update data'
+              type: string
+              format: data
+          type: object
+        relationships:
+          description: 'Related product'
+          properties:
+            manufacturer:
+              description: 'Manafacturer product'
+              properties:
+                data:
+                  description: Data
+                  properties:
+                    uuid:
+                      title: uuid
+                      description: 'ID of the object'
+                      type: string
+                      format: string
+                      maxLength: 36
+                      minLength: 36
+                      example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                    name:
+                      description: Name
+                      type: string
+                      format: string
+                  type: object
+              type: object
+          type: object
+        brands:
+          description: 'Product Brand'
+          properties:
+            data:
+              description: Data
+              properties:
+                uuid:
+                  title: uuid
+                  description: 'ID of the object'
+                  type: string
+                  format: string
+                  maxLength: 36
+                  minLength: 36
+                  example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                name:
+                  description: Name
+                  type: string
+                  format: string
+              type: object
+          type: object
+      type: object
+    ProviderProductSearchResource:
+      title: 'Provider Product Search Resource'
+      description: 'Provider Product Search Resource'
+      properties:
+        type:
+          title: type
+          description: 'Object type'
+          type: string
+          format: string
+          example: provider-collections-search
+        uuid:
+          title: uuid
+          description: 'ID of the object'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Properties of pagination page'
+          properties:
+            name:
+              description: Name
+              type: string
+              format: string
+            image_path:
+              description: 'Image path'
+              type: string
+              format: string
+            is_visible:
+              description: 'Is visible'
+              type: boolean
+              format: boolean
+              example: true
+            sharing_status:
+              description: 'Sharing status'
+              type: string
+              format: string
+            is_hot_data_updated:
+              description: 'Is hot data updated'
+              type: boolean
+              format: boolean
+            date_last_update:
+              description: 'Last update data'
+              type: string
+              format: data
+          type: object
+        relationships:
+          description: 'Related product'
+          properties:
+            manufacturer:
+              description: 'Manafacturer product'
+              properties:
+                data:
+                  description: Data
+                  properties:
+                    uuid:
+                      title: uuid
+                      description: 'ID of the object'
+                      type: string
+                      format: string
+                      maxLength: 36
+                      minLength: 36
+                      example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                    name:
+                      description: Name
+                      type: string
+                      format: string
+                  type: object
+              type: object
+          type: object
+        brands:
+          description: 'Product Brand'
+          properties:
+            data:
+              description: Data
+              properties:
+                uuid:
+                  title: uuid
+                  description: 'ID of the object'
+                  type: string
+                  format: string
+                  maxLength: 36
+                  minLength: 36
+                  example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                name:
+                  description: Name
+                  type: string
+                  format: string
+              type: object
+          type: object
+        collections:
+          description: 'Product Collection'
+          properties:
+            data:
+              description: Data
+              properties:
+                uuid:
+                  title: uuid
+                  description: 'ID of the object'
+                  type: string
+                  format: string
+                  maxLength: 36
+                  minLength: 36
+                  example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+                name:
+                  description: Name
+                  type: string
+                  format: string
+              type: object
+          type: object
+      type: object
+    SubscriptionResource:
+      title: 'Subscription Resource'
+      description: 'Subscription Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: subscriptions
+        uuid:
+          title: uuid
+          description: 'identifire of the subscription'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Attributes of the subscription'
+          properties:
+            name:
+              description: 'Subscription name'
+              type: string
+              format: string
+              example: Starter+
+            code:
+              description: 'Subscription code'
+              type: string
+              format: string
+              example: starter_plus
+            days_trial_period:
+              description: 'Days Trial Period'
+              type: integer
+              format: int32
+              example: starter_plus
+            is_upload_your_photo:
+              description: is_upload_your_photo
+              type: boolean
+              format: boolean
+              example: 'false'
+            products_limit:
+              description: 'Products limit'
+              type: integer
+              format: int32
+              example: '1000'
+            renders_limit:
+              description: 'Renders limit'
+              type: integer
+              format: int32
+              example: '1000'
+            is_white_label_available:
+              description: is_white_label_available
+              type: boolean
+              format: boolean
+              example: 'false'
+          type: object
+      type: object
+    SuccessResource:
+      title: 'Success Response'
+      description: 'Success Response'
+      properties:
+        data:
+          description: Data
+          properties:
+            id:
+              title: id
+              description: 'ID of the request'
+              type: string
+              format: string
+              maxLength: 36
+              minLength: 36
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            status:
+              description: 'The HTTP status code indicates that the request has succeeded.'
+              type: string
+              format: string
+              example: '200'
+            title:
+              description: 'A short, human-readable summary of the success that SHOULD NOT change from occurrence to occurrence of the success, except for purposes of localization.'
+              type: string
+              format: string
+              example: OK.
+            detail:
+              description: 'A human-readable explanation specific to this occurrence of the success. Like title, this field’s value can be localized.'
+              type: string
+              format: string
+              example: OK.
+          type: object
+      type: object
+    UnauthenticatedResource:
+      title: 'Unauthenticated Resource'
+      description: 'Unauthenticated Response'
+      properties:
+        errors:
+          description: Errors
+          type: array
+          items:
+            $ref: '#/components/schemas/UnauthenticatedObject'
+      type: object
+    UnauthorizedResource:
+      title: Unauthorized
+      description: 'Unauthorized Response'
+      properties:
+        data:
+          description: Data
+          type: array
+          items:
+            $ref: '#/components/schemas/UnauthorizedObject'
+      type: object
+    UnexpectedErrorResource:
+      title: 'Unexpected Error'
+      description: 'Unexpected Error Response'
+      properties:
+        errors:
+          description: Errors
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+      type: object
+    UserSubscriptionDetailsResource:
+      title: 'User Subscription Details Resource'
+      description: 'User Subscription Details Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: subscriptions
+        attributes:
+          description: 'Attributes of the subscription'
           properties:
             type:
+              title: type
+              description: 'Name of resource'
               type: string
+              format: string
+              example: subscriptions
             uuid:
+              title: uuid
+              description: 'identifire of the subscription'
               type: string
-              format: uuid
+              format: string
+              maxLength: 36
+              minLength: 36
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
             attributes:
-              type: object
+              description: 'Attributes of the subscription'
               properties:
                 name:
+                  description: 'Subscription name'
                   type: string
+                  format: string
+                  example: Starter+
                 code:
+                  description: 'Subscription code'
                   type: string
+                  format: string
+                  example: starter_plus
+                days_trial_period:
+                  description: 'Days Trial Period'
+                  type: integer
+                  format: int32
+                  example: starter_plus
                 is_upload_your_photo:
+                  description: is_upload_your_photo
                   type: boolean
+                  format: boolean
+                  example: 'false'
                 products_limit:
+                  description: 'Products limit'
                   type: integer
+                  format: int32
+                  example: '1000'
                 renders_limit:
+                  description: 'Renders limit'
                   type: integer
+                  format: int32
+                  example: '1000'
                 is_white_label_available:
+                  description: is_white_label_available
                   type: boolean
+                  format: boolean
+                  example: 'false'
                 start_date:
+                  description: 'Start Date'
                   type: string
                   format: date
                 end_date:
+                  description: 'End Date'
                   type: string
                   format: date
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-
-    Message:
-      type: object
-      properties:
-        data:
+              type: object
           type: object
+        attributes-product-statistics:
+          description: 'Attributes of the subscription'
           properties:
-            message:
-              type: string
-              example: string
-
-    ValidationError:
+            type:
+              title: type
+              description: 'Name of resource'
+              format: string
+              example: subscriptions
+            attributes:
+              description: 'Attributes of the subscription'
+              properties:
+                products_count:
+                  description: 'Count of products'
+                  type: integer
+                  format: int32
+                  example: '500'
+                renders_count:
+                  description: 'Count of renders'
+                  type: integer
+                  format: int32
+                  example: '500'
+              type: object
+          type: object
       type: object
+    ValidationErrorResource:
+      title: 'Validation Error Resource'
+      description: 'Validation Error Response'
       properties:
-        message:
-          type: string
-          example: 'The given data was invalid.'
         errors:
-          type: object
-          properties:
-            fieldName:
-              type: array
-              items:
-                type: string
-                example: 'The fieldName has required.'
-
+          description: Errors
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorObject'
+      type: object
+    ImportHotColdData:
+      title: 'Importing hot cold data Resource'
+      description: 'Importing hot cold data Resource'
+      properties:
+        product_type_code:
+          title: product_type_code
+          description: 'Product type code.'
+          type: string
+          format: string
+          maxLength: 50
+          minLength: 1
+          example: wallpaper
+        owner_id:
+          description: 'Client identifier'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        data:
+          description: 'Product data CSV'
+          type: string
+          format: binary
+      type: object
   parameters:
-    brandParam:
+    uuid:
+      name: uuid
       in: path
-      description: Brand Uuid
-      name: brand
+      description: 'Unique identifier of an object'
+      required: true
       schema:
         type: string
-      required: true
-    articleParam:
+        maximum: 36
+        minimum: 36
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    brandUuid:
+      name: brandUuid
       in: path
-      description: Article Uuid
-      name: article
+      description: 'Brand unique identifier'
+      required: true
       schema:
         type: string
-      required: true
-    collectionParam:
+        maximum: 36
+        minimum: 36
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    collectionUuid:
+      name: collectionUuid
       in: path
-      description: Collection Uuid
-      name: collection
+      description: 'Collection unique identifier'
+      required: true
       schema:
         type: string
+        maximum: 36
+        minimum: 36
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    productUuid:
+      name: productUuid
+      in: path
+      description: 'Product unique identifier'
       required: true
-    localeParam:
+      schema:
+        type: string
+        maximum: 36
+        minimum: 36
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    productTypeUuid:
+      name: productTypeUuid
+      in: path
+      description: 'Product Type unique identifier'
+      required: true
+      schema:
+        type: string
+        maximum: 36
+        minimum: 36
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    userUuid:
+      name: userUuid
+      in: path
+      description: 'ID of an user'
+      required: true
+      schema:
+        type: string
+        maximum: 36
+        minimum: 36
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    q:
+      name: q
       in: query
-      name: locale
+      description: 'Optional search query. Usage: equal - {&#34;field&#34;: &#34;value&#34;}, like - {&#34;field&#34;: {&#34;$like&#34; : &#34;value&#34;}}, in - {&#34;field&#34;: {&#34;$in&#34; : [value1, value2, ...]}}'
       required: false
-      description: Language
       schema:
         type: string
-        enum:
-          - en
-          - ru
-        default: en
-      allowReserved: true
-    pageParam:
-      in: query
+    page:
       name: page
+      in: query
+      description: 'Page of a pagination'
       required: false
-      description: Page of a pagination
       schema:
         type: integer
         default: 1
-    productTypeParam:
+    X-Form-Service-Token:
+      name: X-Form-Service-Token
+      in: header
+      description: 'Form Service Tokent'
+      required: true
+      schema:
+        type: string
+    crop:
+      name: crop
       in: query
-      name: product_type
+      description: 'Specify false if image cannot be cropped.'
       required: false
-      description: Product type code (optional)
+      schema:
+        type: boolean
+        example: 'false'
+    resize:
+      name: resize
+      in: query
+      description: 'Expected image size format (xsmall, small, thumbnail, medium, large).'
+      required: false
       schema:
         type: string
         enum:
-          - wallpaper
-          - laminate
-        default: wallpaper
-    qParam:
-      in: query
-      name: q
-      required: false
-      description: 'Optional search query. Usage: equal - {"field": "value"}, like - {"field": {"$like" : "value"}}, in - {"field": {"$in" : [value1, value2, ...]}}'
+          - xsmall
+          - small
+          - thumbnail
+          - medium
+          - large
+        example: xsmall
+    productTypeCode:
+      name: productTypeCode
+      in: path
+      description: 'Product Type Code'
+      required: true
       schema:
         type: string
-  responses:
-    Too_Many_Attempts:
-      description: Too Many Attempts.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Bad_Request:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Privileges_Error:
-      description: Privileges error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unprocessable_Entity:
-      description: Unprocessable Entity
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ValidationError'
-    NotFound:
-      description: Not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+        example: wallpaper
+    importId:
+      name: importId
+      in: path
+      description: 'Unique identifier of an object'
+      required: true
+      schema:
+        type: integer
+        example: 123
   securitySchemes:
-    Token:
+    webToken:
       type: apiKey
-      description: Api token authentication.
-      name: 'Authorization'
+      description: 'Api token authentication web-sites.'
+      name: Authorization
       in: header
+    iosToken:
+      type: apiKey
+      description: 'Api token authentication for ios application.'
+      name: Authorization
+      in: header
+    androidToken:
+      type: apiKey
+      description: 'Api token authentication for android application.'
+      name: Authorization
+      in: header
+    directToken:
+      type: apiKey
+      description: 'Api token authentication to use API for integration.'
+      name: Authorization
+      in: header
+    AuthBearer:
+      type: http
+      description: 'Bearer token authentication. Token will be received after OAuth2 authentication.'
+      scheme: bearer
     OAuth2:
       type: oauth2
-      description: OAuth2 authentication using password grant
+      description: 'OAuth2 authentication using password grant.'
       flows:
         authorizationCode:
-          authorizationUrl: /oauth/authorize
-          tokenUrl: https://pim-client.wizart.ai/oauth/token
-        password:
-          tokenUrl: https://pim-client.wizart.ai/oauth/token
-
+          authorizationUrl: 'https://dev-pim-client.wizart.ai/oauth/authorize'
+          tokenUrl: 'https://pim-client.wizart.ai/oauth/token'
 tags:
-  - name: Brands
-  - name: Collections
-  - name: Products
-  - name: 'DataSharing - consumer'
-  - name: Imports
+  -
+    name: Brands
+    description: 'Product brand'
+  -
+    name: Collections
+    description: 'Product collection'
+  -
+    name: Products
+    description: Product
+  -
+    name: 'Product Types'
+    description: "Product type is important part of our system.
+        Each product type has different properties and limitations."
+  -
+    name: Imports
+    description: "You can use the API to import and update digital data in your Wizart Visualizer as an alternative to the manual [upload](https://wizart.atlassian.net/wiki/spaces/WDP/pages/49709084/PIM+User+Manual) (through the UI). In this case, every time you upload new product items/collections to your store, they will be automatically added to the Visualizer."
 
-servers:
-  - url: https://pim-client.wizart.ai/api/customer
-    description: Default server
+  -
+    name: 'Data Mappings'
+    description: 'Data mapping helps you understand which fields are available for the selected product type.'
+
+  -
+    name: 'Checking Import'
+    description: "These methods help to check import status. See the 'Checking import status' section above."
+security:
+  -
+    OAuth2: []
+    AuthBearer: []
+    webToken: []
+    iosToken: []
+    androidToken: []
+    directToken: []
