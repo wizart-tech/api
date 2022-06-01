@@ -12,6 +12,635 @@ servers:
     url: 'https://pim-client.wizart.ai/api/v2.1'
     description: 'PIM Endpoint'
 paths:
+  '/brand/{brandUuid}/visibility':
+    patch:
+      tags:
+        - Brands
+        - Visibility
+      summary: 'Update the brand visibility.'
+      description: "This method helps you to define which brands will be shown in the fitting room.\nAll collections of the brand will be inherit this parameter. You can use the special method for collections to determine their visibility individually.\n\n## Headers\n`Accept application/json`\n## Permissions\n`*`\n"
+      operationId: patchBrandVisibility
+      parameters:
+        -
+          $ref: '#/components/parameters/brandUuid'
+      requestBody:
+        description: 'Visibility object'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandUpdateVisibilityRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortBrandResource'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  '/brands/{brandUuid}/':
+    delete:
+      tags:
+        - Brands
+      summary: 'Delete the brand.'
+      description: "Delete the brand.\n## Headers\n`Accept application/json`\n## Permissions\n`Owner: delete the brand. If is a share, the sharing will be canceled.`\n\n`Consumer: The sharing will be canceled.`\n"
+      operationId: deleteBrand
+      parameters:
+        -
+          $ref: '#/components/parameters/brandUuid'
+      requestBody:
+        description: 'Brand Delete object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  $ref: '#/components/schemas/BrandDeleteRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+    patch:
+      tags:
+        - Brands
+      summary: 'Update the brand.'
+      description: "Update the brand.\n## Headers\n`Accept application/json`\n## Permissions\n`The name attribute is only available to the owner.`\n"
+      operationId: patchBrand
+      parameters:
+        -
+          $ref: '#/components/parameters/brandUuid'
+      requestBody:
+        description: 'Brand Update object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  $ref: '#/components/schemas/BrandUpdateRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortBrandResource'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  /brands/:
+    delete:
+      tags:
+        - Brands
+      summary: 'Mass removal of brands.'
+      description: "Mass removal of brands.\n## Headers\n`Accept application/json`\n## Permissions\n`Owner: delete the brand. If is a share, the sharing will be canceled.`\n\n`Consumer: The sharing will be canceled.`\n"
+      operationId: deleteBulkBrand
+      requestBody:
+        description: 'Bulk Brand Delete object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BrandDeleteRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+    patch:
+      tags:
+        - Brands
+      summary: 'Mass update of brands.'
+      description: "Mass update of brands.\n## Headers\n`Accept application/json`\n## Permissions\n`The name attribute is only available to the owner.`\n"
+      operationId: patchBulkBrand
+      requestBody:
+        description: 'Bulk Brand Update object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BrandUpdateRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+
+  '/collection/{collectionUuid}/visibility':
+    patch:
+      tags:
+        - Collections
+        - Visibility
+      summary: 'Update the collection visibility.'
+      description: "This method helps you to define which collection will be shown in the fitting room.\nAll products of the collection will be inherit this parameter. You can use the special method for products to determine their visibility individually.\n\n## Headers\n`Accept application/json`\n## Permissions\n`*`\n"
+      operationId: patchCollectionVisibility
+      parameters:
+        -
+          $ref: '#/components/parameters/collectionUuid'
+      requestBody:
+        description: 'Visibility object'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionUpdateVisibilityRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortCollectionResource'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  '/collections/{collectionUuid}/':
+    delete:
+      tags:
+        - Collections
+      summary: 'Delete the collection.'
+      description: "Delete the collection.\n## Headers\n`Accept application/json`\n## Permissions\n`Owner: delete the collection. If is a share, the sharing will be canceled.`\n\n`Consumer: The sharing will be canceled.`\n"
+      operationId: deleteCollection
+      parameters:
+        -
+          $ref: '#/components/parameters/collectionUuid'
+      requestBody:
+        description: 'Collection Delete object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  $ref: '#/components/schemas/CollectionDeleteRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+    patch:
+      tags:
+        - Collections
+      summary: 'Update the collection.'
+      description: "Update the collection.\n## Headers\n`Accept application/json`\n## Permissions\n`The name attribute is only available to the owner.`\n"
+      operationId: patchCollection
+      parameters:
+        -
+          $ref: '#/components/parameters/collectionUuid'
+      requestBody:
+        description: 'Collection Update object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  $ref: '#/components/schemas/CollectionUpdateRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortCollectionResource'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+  /collections/:
+    delete:
+      tags:
+        - Collections
+      summary: 'Mass removal of collectios.'
+      description: "Mass removal of collections.\n## Headers\n`Accept application/json`\n## Permissions\n`Owner: delete the collection. If is a share, the sharing will be canceled.`\n\n`Consumer: The sharing will be canceled.`\n"
+      operationId: deleteBulkCollection
+      requestBody:
+        description: 'Bulk Collection Delete object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CollectionDeleteRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+    patch:
+      tags:
+        - Collections
+      summary: 'Mass update of collections.'
+      description: "Mass update of collections.\n## Headers\n`Accept application/json`\n## Permissions\n`The name attribute is only available to the owner.`\n"
+      operationId: patchBulkCollection
+      requestBody:
+        description: 'Bulk Collection Update object'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CollectionUpdateRequest'
+              type: object
+      responses:
+        200:
+          description: Success
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+
+  '/collection/{collectionUuid}/product/{productUuid}/visibility':
+    patch:
+      tags:
+        - Products
+        - Visibility
+      summary: 'Update product visibility by collection'
+      description: "This method helps you to define which products will be shown in the fitting room.\n\n## Headers\n`Accept application/json`\n## Permissions\n`*`\n"
+      operationId: patchProductVisibility
+      parameters:
+        -
+          $ref: '#/components/parameters/collectionUuid'
+        -
+          $ref: '#/components/parameters/productUuid'
+      requestBody:
+        description: 'Visibility object'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdateVisibilityRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortProductResource'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+
   /import/product-types:
     get:
       tags:
@@ -276,14 +905,18 @@ paths:
         - Imports
         - 'Checking Import'
       summary: 'Get specific import by Id'
-      description: "This method return information by import ID.\n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n"
+      description: "This method return information by import ID or downloaded log file.\n## Headers\n`Accept: application/json`\n`Accept: application/zip`\n## Permissions\n`*`\n"
       operationId: getImportById
       parameters:
-        - $ref: '#/components/parameters/importId'
+        -
+          $ref: '#/components/parameters/importId'
       responses:
         200:
           description: Success
           content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/ZipObject'
             application/json:
               schema:
                 properties:
@@ -315,9 +948,125 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnexpectedErrorResource'
       security:
-        - AuthBearer: [ ]
+        -
+          AuthBearer: []
       servers:
-        - url: 'https://pim-client.wizart.ai/api/v2.1'
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+    delete:
+      tags:
+        - Imports
+        - 'Checking Import'
+      summary: 'Delete specific import by Id'
+      description: "Delete specific import by Id.\n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n"
+      operationId: deleteImportById
+      parameters:
+        -
+          $ref: '#/components/parameters/importId'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: success
+                type: object
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
+          description: 'PIM Endpoint'
+
+  '/imports/product-type/{productTypeCode}':
+    get:
+      tags:
+        - Imports
+      summary: 'Get imports list by product type.'
+      description: "This method returns list of imports by product type.\n## Headers\n`Accept: application/json`\n## Permissions\n`*`\n        "
+      operationId: getImportsByProductType
+      parameters:
+        -
+          $ref: '#/components/parameters/productTypeCode'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ImportDataResource'
+                  included:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductTypeObject'
+                  links:
+                    $ref: '#/components/schemas/LinksResource'
+                  meta:
+                    $ref: '#/components/schemas/MetaResource'
+                type: object
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResource'
+        401:
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResource'
+        404:
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResource'
+        500:
+          description: 'Unexpected Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedErrorResource'
+      security:
+        -
+          AuthBearer: []
+      servers:
+        -
+          url: 'https://pim-client.wizart.ai/api/v2.1'
           description: 'PIM Endpoint'
 
 components:
@@ -355,6 +1104,27 @@ components:
           format: string
           example: 'Bad Request.'
       type: object
+    BrandDeleteRequest:
+      title: 'Brand Delete Request'
+      description: 'Brand Delete Request'
+      required:
+        - 'type, uuid, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of resource'
+          type: string
+          format: string
+          example: brands
+        id:
+          title: id
+          description: 'ID of resource'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+      type: object
     BrandObject:
       title: 'Brand Object'
       description: 'Brand Object'
@@ -383,6 +1153,73 @@ components:
               title: name
               description: 'New name of the brand'
               type: string
+              format: string
+          type: object
+          format: object
+      type: object
+    BrandResource:
+      title: 'Brand Resource'
+      description: 'Brand Resource'
+      properties:
+        type:
+          title: type
+          description: 'Resource Type'
+          type: string
+          example: brands
+        id:
+          title: string
+          description: 'Resource ID'
+          type: string
+          example: id
+        attributes:
+          title: attributes
+          description: Attributes
+          properties:
+            key:
+              title: key
+              description: Attributes
+              type: string
+              example: value
+          type: object
+      type: object
+    BrandUpdateRequest:
+      title: 'Brand Update Request'
+      description: 'Brand Update Request'
+      required:
+        - 'type, uuid, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of resource'
+          type: string
+          format: string
+          example: brands
+        id:
+          title: id
+          description: 'ID of resource'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          title: attributes
+          description: 'Brand''s attributes'
+          properties:
+            name:
+              title: name
+              description: 'Brand name'
+              type: string
+              format: string
+            is_visible:
+              title: is_visible
+              description: 'Is Visible state'
+              type: boolean
+              format: string
+            order:
+              title: order
+              description: 'New order position'
+              type: number
               format: string
           type: object
           format: object
@@ -501,6 +1338,367 @@ components:
           format: string
           example: 'Server error.'
       type: object
+    ForbiddenObject:
+      title: 'Forbidden Object'
+      description: 'Forbidden Object'
+      required:
+        - 'id, status, title, detail'
+      properties:
+        id:
+          title: id
+          description: 'A unique identifier for this particular occurrence of the problem'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        status:
+          title: status
+          description: 'The HTTP status code applicable to this problem, expressed as a string value.'
+          type: string
+          format: string
+          example: '403'
+        title:
+          title: title
+          description: 'A short, human-readable summary of the problem.'
+          type: string
+          format: string
+          example: 'This action is unauthorized.'
+        detail:
+          title: detail
+          description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+          type: string
+          format: string
+          example: 'This action is unauthorized.'
+      type: object
+    IncludedResource:
+      title: 'Included Resource'
+      description: 'Included Resource'
+      properties:
+        type:
+          title: type
+          description: 'Resource Type'
+          type: string
+          example: type
+        id:
+          title: string
+          description: 'Resource ID'
+          type: string
+          example: id
+        attributes:
+          title: attributes
+          description: Attributes
+          properties:
+            key:
+              type: string
+              example: value
+          type: object
+      type: object
+    InteractiveAssets1Object:
+      title: 'Shadows map Assets Object'
+      description: 'Interactive Assets Object (Shadows map)'
+      required:
+        - 'type, id, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of the resource'
+          type: string
+          format: string
+          example: assets_1
+        id:
+          title: id
+          description: 'ID of the resource'
+          type: string
+          format: string
+          example: 0fe7bafc663b7ae469be1ecf3b926c9c
+        attributes:
+          description: Attributes
+          properties:
+            iv:
+              title: iv
+              description: 'IV of the resource'
+              type: string
+              format: string
+              example: string
+            image_data:
+              title: image_data
+              description: 'Image Data of the resource'
+              type: string
+              format: string
+              example: string
+          type: object
+      type: object
+    InteractiveAssets2Object:
+      title: 'Masck Asset Object'
+      description: 'Interactive Assets Object (Mask of room)'
+      required:
+        - 'type, id, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of the resource'
+          type: string
+          format: string
+          example: assets_2
+        id:
+          title: id
+          description: 'ID of the resource'
+          type: string
+          format: string
+          example: 0fe7bafc663b7ae469be1ecf3b926c9c
+        attributes:
+          description: Attributes
+          properties:
+            iv:
+              title: iv
+              description: 'IV of the resource'
+              type: string
+              format: string
+              example: string
+            image_data:
+              title: image_data
+              description: 'Image Data of the resource'
+              type: string
+              format: string
+              example: string
+          type: object
+      type: object
+    InteractiveFloorsObject:
+      title: 'Interactive Floors Object'
+      description: 'Interactive Floors Object'
+      required:
+        - 'type, id, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of the resource'
+          type: string
+          format: string
+          example: floors
+        id:
+          title: id
+          description: 'ID of the resource'
+          type: string
+          format: string
+          example: '0'
+        attributes:
+          description: Attributes
+          properties:
+            x:
+              title: x
+              description: X
+              type: number
+              example: 64.666962623596
+            'y':
+              title: 'y'
+              description: 'Y'
+              type: number
+              example: 81.785773448187
+          type: object
+      type: object
+    InteractiveMetaObject:
+      title: 'Interactive Meta Object'
+      description: 'Interactive Meta Object'
+      required:
+        - 'type, id, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of the resource'
+          type: string
+          format: string
+          example: meta
+        id:
+          title: id
+          description: 'ID of the resource'
+          type: string
+          format: string
+          example: 0fe7bafc663b7ae469be1ecf3b926c9c
+        attributes:
+          description: Attributes
+          properties:
+            version:
+              title: iv
+              description: 'Version of the interior resource'
+              type: number
+              example: 1.1
+            FoV:
+              title: FoV
+              description: FoV
+              type: number
+              example: 55
+            key_plane_distance:
+              title: key_plane_distance
+              description: key_plane_distance
+              type: number
+              example: 0.8
+            euler_x:
+              title: euler_x
+              description: euler_x
+              type: number
+              example: 0
+            euler_y:
+              title: euler_y
+              description: euler_y
+              type: number
+              example: 0
+            euler_z:
+              title: euler_z
+              description: euler_z
+              type: number
+              example: 0
+          type: object
+      type: object
+    InteractiveOriginalImageObject:
+      title: 'Original Image Object'
+      description: 'Interactive Original Image Object'
+      required:
+        - 'type, id, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of the resource'
+          type: string
+          format: string
+          example: original_image
+        id:
+          title: id
+          description: 'ID of the resource'
+          type: string
+          format: string
+          example: 0fe7bafc663b7ae469be1ecf3b926c9c
+        attributes:
+          description: Attributes
+          properties:
+            iv:
+              title: iv
+              description: 'IV of the resource'
+              type: string
+              format: string
+              example: string
+            image_data:
+              title: image_data
+              description: 'Image Data of the resource'
+              type: string
+              format: string
+              example: string
+          type: object
+      type: object
+    InteractiveWallsObject:
+      title: 'Interactive Walls Object'
+      description: 'Interactive Walls Object'
+      required:
+        - 'type, id, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of the resource'
+          type: string
+          format: string
+          example: walls
+        id:
+          title: id
+          description: 'ID of the resource'
+          type: string
+          format: string
+          example: '0'
+        attributes:
+          description: Attributes
+          properties:
+            x:
+              title: x
+              description: X
+              type: number
+              example: 64.666962623596
+            'y':
+              title: 'y'
+              description: 'Y'
+              type: number
+              example: 81.785773448187
+          type: object
+      type: object
+    LinksResource:
+      title: 'Links Resource'
+      description: 'Links Resource'
+      properties:
+        first:
+          type: string
+          example: 'http://localhost:8051/api/v2.1/imports/product-type/wallpaper?page=1'
+        last:
+          type: string
+          example: 'http://localhost:8051/api/v2.1/imports/product-type/wallpaper?page=27'
+        prev:
+          type: string
+          example: 'null'
+        next:
+          type: string
+          example: 'http://localhost:8051/api/v2.1/imports/product-type/wallpaper?page=2'
+      type: object
+    MetaResource:
+      title: 'Meta Resource'
+      description: 'Meta Resource'
+      properties:
+        current_page:
+          type: number
+          example: '1'
+        from:
+          type: number
+          example: '1'
+        last_page:
+          type: number
+          example: '27'
+        links:
+          type: array
+          items:
+            properties:
+              url:
+                type: string
+                example: 'http://localhost:8051/api/v2.1/imports/product-type/wallpaper?page=1'
+              label:
+                type: number
+                example: '1'
+              active:
+                type: boolean
+                example: 'true'
+            type: object
+        per_page:
+          type: number
+          example: '20'
+        to:
+          type: number
+          example: '20'
+        total:
+          type: number
+          example: '537'
+      type: object
+    ModelResource:
+      title: 'Model Resource'
+      description: 'Model Resource'
+      properties:
+        type:
+          title: type
+          description: 'Resource Type'
+          type: string
+          example: type
+        id:
+          title: string
+          description: 'Resource ID'
+          type: string
+          example: id
+        attributes:
+          title: attributes
+          description: Attributes
+          properties:
+            key:
+              title: key
+              description: Attributes
+              type: string
+              example: value
+          type: object
+        relationships:
+          $ref: '#/components/schemas/RelationshipsResource'
+      type: object
     NotFoundObject:
       title: 'Not Found Object'
       description: 'Not Found Object'
@@ -552,6 +1750,77 @@ components:
           description: 'Vendor code'
           format: string
           example: product-U1
+      type: object
+    ProductTypeObject:
+      title: 'Product Type Object'
+      description: 'Product Type Object'
+      required:
+        - 'type, uuid'
+      properties:
+        type:
+          title: type
+          description: 'Type of resource'
+          type: string
+          format: string
+          example: product_types
+        id:
+          title: id
+          description: 'ID of resource'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          title: attributes
+          description: 'Product Type''s attributes'
+          properties:
+            code:
+              title: code
+              description: 'Product Type Code'
+              type: string
+              format: string
+              example: Rug
+          type: string
+          format: object
+      type: object
+    RelationshipsResource:
+      title: 'Relationships Resource'
+      description: 'Relationships Resource'
+      properties:
+        type:
+          title: type
+          description: 'Resource Type'
+          properties:
+            data:
+              title: data
+              description: Data
+              type: array
+              items:
+                properties:
+                  type:
+                    type: string
+                    example: type
+                  id:
+                    type: string
+                    example: id
+                type: object
+          type: object
+      type: object
+    TariffPlanStatusUpdate:
+      title: 'Tariff Plan Status Update Resource'
+      description: 'Tariff Plan Status Update Resource'
+      properties:
+        type:
+          title: type
+          description: 'Resource Type'
+          type: string
+          example: tariff_plan_statuses
+        id:
+          title: string
+          description: 'Resource ID'
+          type: string
+          example: license
       type: object
     UnauthenticatedObject:
       title: 'Unauthenticated Object'
@@ -675,6 +1944,170 @@ components:
           type: boolean
           format: boolean
           example: 'true'
+      type: object
+    ZipObject:
+      title: 'Zip Object'
+      description: 'Zip Object'
+      type: string
+      format: binary
+    BrandUpdateVisibilityRequest:
+      title: 'Brand Visibility Object'
+      description: 'Brand Visibility Object'
+      properties:
+        data:
+          description: 'Brand Update Visibility Request'
+          properties:
+            id:
+              title: id
+              description: 'Brand unique identifier'
+              type: string
+              format: string
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            type:
+              title: type
+              description: 'Brand type'
+              type: string
+              format: string
+              example: brands
+            attributes:
+              title: attributes
+              description: 'Request Attributes'
+              properties:
+                is_visible:
+                  title: is_visible
+                  description: 'Visibility flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+              type: object
+          type: object
+      type: object
+    CollectionDeleteRequest:
+      title: 'Collection Delete Request'
+      description: 'Collection Delete Request'
+      required:
+        - 'type, uuid'
+      properties:
+        type:
+          title: type
+          description: 'Type of resource'
+          type: string
+          format: string
+          example: collections
+        id:
+          title: id
+          description: 'ID of resource'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+      type: object
+    CollectionUpdateRequest:
+      title: 'Collection Update Request'
+      description: 'Collection Update Request'
+      required:
+        - 'type, uuid, attributes'
+      properties:
+        type:
+          title: type
+          description: 'Type of resource'
+          type: string
+          format: string
+          example: collections
+        id:
+          title: id
+          description: 'ID of resource'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          title: attributes
+          description: 'Collection''s attributes'
+          properties:
+            name:
+              title: name
+              description: 'Collection name'
+              type: string
+              format: string
+            is_visible:
+              title: is_visible
+              description: 'Is Visible state'
+              type: boolean
+              format: string
+            order:
+              title: order
+              description: 'New order position'
+              type: number
+              format: string
+          type: object
+          format: object
+      type: object
+    CollectionUpdateVisibilityRequest:
+      title: 'Collection Visibility Object'
+      description: 'Collection Visibility Object'
+      properties:
+        data:
+          description: 'Update Visibility Request'
+          properties:
+            id:
+              title: id
+              description: 'Collection unique identifier'
+              type: string
+              format: string
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            type:
+              title: type
+              description: 'Collection type'
+              type: string
+              format: string
+              example: collections
+            attributes:
+              title: attributes
+              description: 'Request Attributes'
+              properties:
+                is_visible:
+                  title: is_visible
+                  description: 'Visibility flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+              type: object
+          type: object
+      type: object
+    ProductUpdateVisibilityRequest:
+      title: 'Product Visibility Object'
+      description: 'Product Visibility Object'
+      properties:
+        data:
+          description: 'Product Update Visibility Request'
+          properties:
+            id:
+              title: id
+              description: 'Product unique identifier'
+              type: string
+              format: string
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            type:
+              title: type
+              description: 'Product type'
+              type: string
+              format: string
+              example: products
+            attributes:
+              title: attributes
+              description: 'Request Attributes'
+              properties:
+                is_visible:
+                  title: is_visible
+                  description: 'Visibility flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+              type: object
+          type: object
       type: object
     AcceptedResource:
       title: Accepted
@@ -832,6 +2265,89 @@ components:
           type: string
           format: string
       type: object
+    ForbiddenResource:
+      title: 'Forbidden Resource'
+      description: 'Forbidden Response'
+      properties:
+        errors:
+          description: Errors
+          type: array
+          items:
+            $ref: '#/components/schemas/ForbiddenObject'
+      type: object
+    FullImportDataResource:
+      title: 'Full Import Data Resource'
+      description: 'Full Import Data Resource'
+      properties:
+        type:
+          title: type
+          description: 'Name of resource'
+          type: string
+          format: string
+          example: imports_data
+        id:
+          title: id
+          description: 'Identifire of the import'
+          type: string
+          format: string
+          example: '8054'
+        attributes:
+          description: 'Attributes of the import data'
+          properties:
+            path:
+              description: Path
+              type: string
+            original_name:
+              description: 'Original name'
+              type: string
+            status:
+              description: Status
+              type: string
+            status_message:
+              description: 'Status Message'
+              type: string
+            result:
+              description: Result
+              type: string
+            mapping_id:
+              description: 'Mapping ID'
+              type: string
+            created_at:
+              description: 'Created At'
+              type: string
+            updated_at:
+              description: 'Updated At'
+              type: string
+            timezone:
+              description: Timezone
+              type: string
+          type: object
+        relationships:
+          description: Relationships
+          properties:
+            product_types:
+              description: 'Product Types'
+              properties:
+                data:
+                  title: data
+                  description: Data
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        title: id
+                        description: ID
+                        type: string
+                        example: 0fe7bafc663b7ae469be1ecf3b926c9c
+                      type:
+                        title: type
+                        description: Type
+                        type: string
+                        example: product_types
+                    type: object
+              type: object
+          type: object
+      type: object
     FullProductResource:
       title: Product
       description: 'Product Response'
@@ -932,6 +2448,245 @@ components:
                   type: object
               type: object
           type: object
+      type: object
+    InteractiveProductResource:
+      title: 'Interactive Product Resource'
+      description: 'Interactive Product Resource'
+      properties:
+        data:
+          description: Data
+          properties:
+            type:
+              title: type
+              description: 'Type of the resource'
+              type: string
+              format: string
+              example: interactive_products
+            id:
+              title: id
+              description: 'ID of the resource'
+              type: string
+              format: string
+              maxLength: 36
+              minLength: 36
+              example: 0cbcacb2-147f-ea27-82a8-0242ac130003
+            attributes:
+              description: Attributes
+              properties:
+                image:
+                  description: 'Product Image URL'
+                  type: string
+                  format: string
+                  example: 'image url'
+                width:
+                  description: 'Product Width'
+                  type: number
+                  example: '0.53'
+                product_length:
+                  description: 'Product Length'
+                  type: number
+                  example: '2.07'
+                pile_height:
+                  description: 'Product Pile Height'
+                  type: number
+                  example: '1'
+                product_shape:
+                  description: 'Product Shape'
+                  type: string
+                  format: string
+                  example: 'square, round'
+              type: object
+            relationships:
+              description: Relationships
+              properties:
+                product_types:
+                  description: 'Product Types'
+                  properties:
+                    data:
+                      title: data
+                      description: Data
+                      type: array
+                      items:
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: 0fe7bafc663b7ae469be1ecf3b926c9c
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: product_types
+                        type: object
+                  type: object
+                original_images:
+                  description: 'Original Images'
+                  properties:
+                    data:
+                      title: data
+                      description: Data
+                      type: array
+                      items:
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: '0'
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: original_images
+                        type: object
+                  type: object
+              type: object
+          type: object
+        included:
+          description: Included
+          type: array
+          items:
+            oneOf:
+              -
+                $ref: '#/components/schemas/ProductTypeObject'
+              -
+                $ref: '#/components/schemas/InteractiveOriginalImageObject'
+      type: object
+    InteractiveRoomResource:
+      title: 'Interactive Room Resource'
+      description: 'Interactive Room Resource'
+      properties:
+        data:
+          description: Data
+          properties:
+            type:
+              title: type
+              description: 'Type of the resource'
+              type: string
+              format: string
+              example: rooms
+            id:
+              title: id
+              description: 'ID of the resource'
+              type: string
+              format: string
+              maxLength: 36
+              minLength: 36
+              example: 3cf389fb-b389-46d2-b625-4abf39b0cc9e
+            attributes:
+              description: Attributes
+              properties:
+                image_path:
+                  description: 'Background Image URL'
+                  type: string
+                  format: string
+                  example: url
+              type: object
+            relationships:
+              description: Relationships
+              properties:
+                assets:
+                  description: Assets
+                  properties:
+                    data:
+                      title: data
+                      description: Data
+                      type: array
+                      items:
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: 0fe7bafc663b7ae469be1ecf3b926c9c
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: assets_1
+                        type: object
+                  type: object
+                walls:
+                  description: Walls
+                  properties:
+                    data:
+                      title: data
+                      description: Data
+                      type: array
+                      items:
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: '0'
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: walls
+                        type: object
+                  type: object
+                floors:
+                  description: Floors
+                  properties:
+                    data:
+                      title: data
+                      description: Data
+                      type: array
+                      items:
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: '0'
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: floors
+                        type: object
+                  type: object
+                meta:
+                  description: Meta
+                  properties:
+                    data:
+                      title: data
+                      description: Data
+                      type: array
+                      items:
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: '0'
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: meta
+                        type: object
+                  type: object
+              type: object
+          type: object
+        included:
+          description: Included
+          type: array
+          items:
+            oneOf:
+              -
+                $ref: '#/components/schemas/InteractiveAssets1Object'
+              -
+                $ref: '#/components/schemas/InteractiveAssets2Object'
+              -
+                $ref: '#/components/schemas/InteractiveMetaObject'
+              -
+                $ref: '#/components/schemas/InteractiveFloorsObject'
+              -
+                $ref: '#/components/schemas/InteractiveWallsObject'
       type: object
     LocaleResource:
       title: 'Subscription Resource'
@@ -1438,6 +3193,223 @@ components:
               type: object
           type: object
       type: object
+    ProviderSharedBrandsResource:
+      title: 'Provider Shared Brands Resource'
+      description: 'Provider Shared Brands Resource'
+      properties:
+        type:
+          title: type
+          description: 'Object type'
+          type: string
+          format: string
+          example: shared_brands
+        id:
+          title: uuid
+          description: 'ID of the object'
+          type: string
+          format: string
+          maxLength: 36
+          minLength: 36
+          example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+        attributes:
+          description: 'Properties of pagination page'
+          properties:
+            name:
+              description: Name
+              type: string
+              format: string
+            image_path:
+              description: 'Image path'
+              type: string
+              format: string
+            is_visible:
+              description: 'Is visible'
+              type: boolean
+              format: boolean
+              example: true
+            sharing_status:
+              description: 'Sharing status'
+              type: string
+              format: string
+            partially_visible:
+              description: 'Partially visible'
+              type: boolean
+              format: boolean
+              example: true
+            source_uuid:
+              description: 'Source uuid'
+              type: string
+              format: string
+          type: object
+      type: object
+    ShortBrandResource:
+      title: 'Short Brand'
+      description: 'Short Brand Response'
+      properties:
+        data:
+          description: 'Short Brand Resource'
+          properties:
+            id:
+              title: id
+              description: 'Brand unique identifier'
+              type: string
+              format: string
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            type:
+              title: type
+              description: 'Resource Type'
+              type: string
+              format: string
+              example: short_brands
+            attributes:
+              title: attributes
+              description: 'Brand Attributes'
+              properties:
+                name:
+                  title: name
+                  description: Name
+                  type: string
+                  format: string
+                  example: Singita
+                image_path:
+                  title: image_path
+                  description: 'Image Path'
+                  type: string
+                  format: string
+                  example: image_path
+                is_visible:
+                  title: is_visible
+                  description: 'Visibility flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+                partially_visible:
+                  title: partially_visible
+                  description: 'Partially Visible flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+                is_default_cover:
+                  title: is_default_cover
+                  description: 'Default Cover flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+                order:
+                  title: order
+                  description: 'Brand Order'
+                  type: number
+                  format: string
+                  example: '1'
+              type: object
+          type: object
+      type: object
+    ShortCollectionResource:
+      title: 'Short Collection'
+      description: 'Short Collection Response'
+      properties:
+        data:
+          description: 'Short Collection Resource'
+          properties:
+            id:
+              title: id
+              description: 'Collection unique identifier'
+              type: string
+              format: string
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            type:
+              title: type
+              description: 'Resource type'
+              type: string
+              format: string
+              example: short_collections
+            attributes:
+              title: attributes
+              description: 'Collection Attributes'
+              properties:
+                name:
+                  title: name
+                  description: Name
+                  type: string
+                  format: string
+                  example: Wallpaper
+                image_path:
+                  title: image_path
+                  description: 'Image Path'
+                  type: string
+                  format: string
+                  example: image_path
+                is_visible:
+                  title: is_visible
+                  description: 'Visibility flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+                partially_visible:
+                  title: partially_visible
+                  description: 'Partially Visible flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+                is_default_cover:
+                  title: is_default_cover
+                  description: 'Default Cover flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+              type: object
+          type: object
+      type: object
+    ShortProductResource:
+      title: 'Short Product'
+      description: 'Short Product Response'
+      properties:
+        data:
+          description: 'Short Product Resource'
+          properties:
+            id:
+              title: id
+              description: 'Product unique identifier'
+              type: string
+              format: string
+              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+            type:
+              title: type
+              description: 'Resource type'
+              type: string
+              format: string
+              example: short_products
+            attributes:
+              title: attributes
+              description: 'Product Attributes'
+              properties:
+                name:
+                  title: name
+                  description: Name
+                  type: string
+                  format: string
+                  example: Singita
+                locale:
+                  title: locale
+                  description: Locale
+                  type: string
+                  format: string
+                  example: en
+                image_path:
+                  title: image_path
+                  description: 'Image Path'
+                  type: string
+                  format: string
+                  example: image_path
+                is_visible:
+                  title: is_visible
+                  description: 'Visibility flag'
+                  type: boolean
+                  format: boolean
+                  example: 'true'
+              type: object
+          type: object
+      type: object
     SubscriptionResource:
       title: 'Subscription Resource'
       description: 'Subscription Resource'
@@ -1499,34 +3471,96 @@ components:
     SuccessResource:
       title: 'Success Response'
       description: 'Success Response'
+    TariffPlanStatusesResource:
+      title: 'Tariff Plan Statuses Resource'
+      description: 'Tariff Plan Statuses by State Code Resource'
       properties:
         data:
           description: Data
-          properties:
-            id:
-              title: id
-              description: 'ID of the request'
-              type: string
-              format: string
-              maxLength: 36
-              minLength: 36
-              example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
-            status:
-              description: 'The HTTP status code indicates that the request has succeeded.'
-              type: string
-              format: string
-              example: '200'
-            title:
-              description: 'A short, human-readable summary of the success that SHOULD NOT change from occurrence to occurrence of the success, except for purposes of localization.'
-              type: string
-              format: string
-              example: OK.
-            detail:
-              description: 'A human-readable explanation specific to this occurrence of the success. Like title, this field’s value can be localized.'
-              type: string
-              format: string
-              example: OK.
-          type: object
+          type: array
+          items:
+            properties:
+              type:
+                title: type
+                description: 'Type of the resource'
+                type: string
+                format: string
+                example: tariff_plan_statuses
+              id:
+                title: id
+                description: 'ID of the resource'
+                type: string
+                format: string
+                example: license
+              attributes:
+                description: Attributes
+                properties:
+                  code:
+                    description: 'Status code'
+                    type: string
+                    format: string
+                    example: license
+                  name:
+                    description: 'Status name'
+                    type: string
+                    format: string
+                    example: License
+                type: object
+              relationships:
+                description: Relationships
+                properties:
+                  tariff_plan_states:
+                    description: 'Tariff Plan State'
+                    properties:
+                      data:
+                        description: Data
+                        properties:
+                          id:
+                            title: id
+                            description: ID
+                            type: string
+                            example: active
+                          type:
+                            title: type
+                            description: Type
+                            type: string
+                            example: tariff_plan_states
+                        type: object
+                    type: object
+                type: object
+            type: object
+        included:
+          description: Included
+          type: array
+          items:
+            properties:
+              type:
+                title: type
+                description: 'Type of the resource'
+                type: string
+                format: string
+                example: tariff_plan_states
+              id:
+                title: id
+                description: 'ID of the resource'
+                type: string
+                format: string
+                example: active
+              attributes:
+                description: Attributes
+                properties:
+                  code:
+                    description: 'State code'
+                    type: string
+                    format: string
+                    example: active
+                  name:
+                    description: 'State name'
+                    type: string
+                    format: string
+                    example: Active
+                type: object
+            type: object
       type: object
     UnauthenticatedResource:
       title: 'Unauthenticated Resource'
@@ -1774,6 +3808,66 @@ components:
       required: true
       schema:
         type: string
+    'brand_ids[]':
+      name: 'brand_ids[]'
+      in: query
+      description: 'Brand comma separated uuids'
+      required: false
+      schema:
+        type: string
+        example: e27fec1a-9305-4bf7-b3a6-d5e05a3621df
+    'collection_ids[]':
+      name: 'collection_ids[]'
+      in: query
+      description: 'Collection comma separated uuids.'
+      required: false
+      schema:
+        type: string
+        example: 'e27fec1a-9305-4bf7-b3a6-d5e05a3621df, e27fec1a-9305-4bf7-b3a6-d5e05a3621dd'
+    dataFile:
+      name: dataFile
+      in: path
+      description: 'File with data.'
+      required: true
+      schema:
+        type: string
+        format: binary
+    productTypeCode:
+      name: productTypeCode
+      in: path
+      description: 'Product Type Code'
+      required: true
+      schema:
+        type: string
+        example: wallpaper
+    importId:
+      name: importId
+      in: path
+      description: 'Unique identifier of an object'
+      required: true
+      schema:
+        type: integer
+        example: 123
+    roomUuid:
+      name: roomUuid
+      in: path
+      description: 'Room unique identifier'
+      required: true
+      schema:
+        type: string
+        maximum: 36
+        minimum: 36
+        example: 3cf389fb-b389-46d2-b625-4abf39b0cc9e
+    tariffPlanStateCode:
+      name: tariffPlanStateCode
+      in: path
+      description: 'Tariff plan state code'
+      required: true
+      schema:
+        type: string
+        maximum: 36
+        minimum: 36
+        example: active
     crop:
       name: crop
       in: query
@@ -1796,22 +3890,6 @@ components:
           - medium
           - large
         example: xsmall
-    productTypeCode:
-      name: productTypeCode
-      in: path
-      description: 'Product Type Code'
-      required: true
-      schema:
-        type: string
-        example: wallpaper
-    importId:
-      name: importId
-      in: path
-      description: 'Unique identifier of an object'
-      required: true
-      schema:
-        type: integer
-        example: 123
   securitySchemes:
     webToken:
       type: apiKey
@@ -1847,28 +3925,29 @@ components:
 tags:
   -
     name: Brands
-    description: 'Product brand'
+    description: 'Product brand.'
   -
     name: Collections
-    description: 'Product collection'
+    description: 'Product collection.'
   -
     name: Products
-    description: Product
+    description: Product.
   -
     name: 'Product Types'
-    description: "Product type is important part of our system.
-        Each product type has different properties and limitations."
-  -
-    name: Imports
-    description: "You can use the API to import and update digital data in your Wizart Visualizer as an alternative to the manual [upload](https://wizart.atlassian.net/wiki/spaces/WDP/pages/49709084/PIM+User+Manual) (through the UI). In this case, every time you upload new product items/collections to your store, they will be automatically added to the Visualizer."
-
+    description: 'Product type is important part of our system. Each product type has different properties and limitations.'
   -
     name: 'Data Mappings'
     description: 'Data mapping helps you understand which fields are available for the selected product type.'
-
+  -
+    name: Imports
+    description: 'You can use the API to import and update digital data in your Wizart Visualizer as an alternative to the manual [upload](https://wizart.atlassian.net/wiki/spaces/WDP/pages/49709084/PIM+User+Manual) (through the UI). In this case, every time you upload new product items/collections to your store, they will be automatically added to the Visualizer.'
   -
     name: 'Checking Import'
-    description: "These methods help to check import status. See the 'Checking import status' section above."
+    description: 'These methods help to check import status. See the ''Checking import status'' section above.'
+  -
+    name: Visibility
+    description: 'Visibility it is a parameter which detect what will be shown in the fitting room.'
+
 security:
   -
     OAuth2: []
