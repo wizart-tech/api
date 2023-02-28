@@ -1,4 +1,4 @@
-We developed our API to help our clients to manage their data. The API use REST approach based on JSON format. In our
+We developed our API to help our clients to manage their data in WIzart PIM. The API use REST approach based on JSON format. In our
 developing we are going to standardise the API and our goal is full supporting JSON:API v1.1 specification. More details
 about the specification you can found here [JSON:API Specification](https://jsonapi.org/format/1.1/).
 
